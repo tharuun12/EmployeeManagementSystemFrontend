@@ -21,6 +21,8 @@ const ChangePassword = () => {
     newPassword: "",
     confirmPassword: "",
   });
+  const userString = localStorage.getItem("user");
+  const user = userString ? JSON.parse(userString) : null;
   const [errors, setErrors] = useState<ChangePasswordErrors>({});
   const [serverError, setServerError] = useState("");
   const [showOld, setShowOld] = useState(false);
@@ -45,6 +47,7 @@ const ChangePassword = () => {
         oldPassword: form.oldPassword,
         newPassword: form.newPassword,
         confirmPassword: form.confirmPassword,
+        Email: user?.email,
       });
       navigate("/");
     } catch (err: unknown) {

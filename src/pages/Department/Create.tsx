@@ -34,8 +34,6 @@ const DepartmentCreate = () => {
       .catch(() => setManagers([]));
       
   }, []);
-  console.log(managers);
-  console.log(form);
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -46,7 +44,8 @@ const DepartmentCreate = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError("");
-    // Basic validation
+
+    // Basic validation for department name
     if (!form.departmentName) {
       setErrors((prev) => ({
         ...prev,
@@ -54,19 +53,18 @@ const DepartmentCreate = () => {
       }));
       return;
     }
-    if (!form.managerId) {
-      setErrors((prev) => ({
-        ...prev,
-        managerId: "Manager is required",
-      }));
-      return;
-    }
+
     try {
-      console.log("Submitting form:", form);
-      await api.post("/department/create", {
+      const payload: any = {
         DepartmentName: form.departmentName,
-        ManagerId: Number(form.managerId),
-      });
+      };
+
+      // Only add ManagerId if a manager is selected
+      if (form.managerId) {
+        payload.ManagerId = Number(form.managerId);
+      }
+
+      await api.post("/department/create", payload);
       navigate("/department");
     } catch (err: unknown) {
       if (
@@ -88,6 +86,7 @@ const DepartmentCreate = () => {
       }
     }
   };
+
 
   return (
     <div className="create-form">
@@ -115,29 +114,25 @@ const DepartmentCreate = () => {
           )}
         </div>
 
-        <div className="form-group">
-          <label className="form-label" htmlFor="managerId">
-            Manager
-          </label>
-          <select
-            name="managerId"
-            id="managerId"
-            className="form-control"
-            value={form.managerId}
-            onChange={handleChange}
-            required
-          >
-            <option value="">-- Select Manager --</option>
-            {managers.map((manager) => (
-              <option key={manager.employeeId} value={manager.employeeId}>
-                {manager.fullName}
-              </option>
-            ))}
-          </select>
-          {errors.managerId && (
-            <span className="form-error">{errors.managerId}</span>
-          )}
-        </div>
+<div className="form-group">
+  <label className="form-label" htmlFor="managerId">
+    Manager <span style={{ fontWeight: "normal", color: "#666" }}>(Optional)</span>
+  </label>
+  <select
+    name="managerId"
+    id="managerId"
+    className="form-control"
+    value={form.managerId}
+    onChange={handleChange}
+  >
+    <option value="">-- No Manager Assigned --</option>
+    {managers.map((manager) => (
+      <option key={manager.employeeId} value={manager.employeeId}>
+        {manager.fullName}
+      </option>
+    ))}
+  </select>
+</div>
 
         <div className="form-actions">
           <button type="submit" className="btn btn-success">

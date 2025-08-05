@@ -47,23 +47,18 @@ const Login = () => {
     console.log("Submitting login form:", form);
     const response = await api.post("/account/login", form);
 
-    // Assuming the backend returns a JWT token and user details like:
-    // { token: "xxx", user: { id: 1, email: "test@example.com", role: "Admin" } }
+    const { token, roles, name, email, employeeId } = response.data;
 
-    const { token, roles, name, email } = response.data;
-
-    // Save token and user info
     localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify({ name, email, roles }));
+    localStorage.setItem("userId", employeeId);
+    localStorage.setItem("user", JSON.stringify({ name, email, roles, employeeId }));
 
-    // Set default Authorization header for future API calls
     api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    // Redirect based on role
-    const role = roles[0]; // assuming one role per user
-    if (role === "Admin") navigate("/admin/dashboard");
-    else if (role === "Manager") navigate("/manager/dashboard");
-    else navigate("/employee/dashboard");
+    const role = roles[0]; 
+    if (role === "Admin") navigate("/dashboard");
+    else if (role === "Manager") navigate("/employee/profile");
+    else navigate("/employee/profile");
 
   } catch (err: unknown) {
     if (
@@ -151,7 +146,7 @@ const Login = () => {
             />
             <label className="login-remember-label">Remember Me</label>
           </div>
-          <Link to="/forgotpassword" className="login-forgot-link1">
+          <Link to="/account/forgotpassword" className="login-forgot-link1">
             Forgot Password?
           </Link>
         </div>
@@ -165,7 +160,7 @@ const Login = () => {
         <div className="login-remember-forgot1">
           <p>
             Don't have an account?{" "}
-            <Link to="/register" className="login-forgot-link1">
+            <Link to="/account/register" className="login-forgot-link1">
               Register
             </Link>
           </p>

@@ -27,7 +27,11 @@ const CurrentMonthInfo = () => {
 
   useEffect(() => {
     api
-      .get("/api/employee/currentmonthinfo")
+      .get("/employees/current-month-info", {
+        params: {
+          id: localStorage.getItem("userId"),
+        }
+      })
       .then((res) => {
         setData(res.data);
         setLoading(false);

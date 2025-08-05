@@ -27,15 +27,19 @@ const EmployeeProfile = () => {
 
   useEffect(() => {
     api
-      .get("/employees/profile")
+      .get("/employees/profile", {
+      params: {
+        id: localStorage.getItem("userId"),
+      }
+      })
       .then((res) => {
-        console.log(res.data);
-        setProfile(res.data);
-        setLoading(false);
+      console.log(res.data);
+      setProfile(res.data);
+      setLoading(false);
       })
       .catch(() => {
-        setError("Failed to load profile.");
-        setLoading(false);
+      setError("Failed to load profile.");
+      setLoading(false);
       });
   }, []);
 

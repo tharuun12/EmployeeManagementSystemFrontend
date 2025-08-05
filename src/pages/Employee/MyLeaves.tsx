@@ -19,12 +19,12 @@ const MyLeaves = () => {
   useEffect(() => {
     api
       .get("/employees/my-leaves", {
-        // params: {
-        //   employeeId: localStorage.getItem("employeeId"),
-        // },
         params: {
-          employeeId: id,
+          employeeId: localStorage.getItem("employeeId"),
         },
+        // params: {
+        //   employeeId: id,
+        // },
       })
       .then((res) => {
         setLeaves(res.data);

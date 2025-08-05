@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import api from "../../api/axiosInstance"; 
+import { useNavigate } from "react-router-dom";
+
 type ForgotPasswordForm = {
   email: string;
 };
@@ -19,6 +21,7 @@ const ForgotPassword = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,8 +34,11 @@ const ForgotPassword = () => {
     }
 
     try {
-      await api.post("/account/forgotpassword", form);
+      const res = await api.post("/account/forgotpassword", form);
+      console.log("Forgot password response:", res.data);
+      const OtpData = res.data
       setSuccess(true);
+      navigate("/account/verifyotp", { state: { otp: OtpData.otp,  otpEmail: OtpData.otpEmail, otpExpiry: OtpData.otpExpiry } });
     } catch (err: unknown) {
       if (
         typeof err === "object" &&
@@ -53,7 +59,7 @@ const ForgotPassword = () => {
       }
     }
   };
-
+  console.log("ForgotPassword form state:", form);
   return (
     <>
       <h2>Forgot Password</h2>

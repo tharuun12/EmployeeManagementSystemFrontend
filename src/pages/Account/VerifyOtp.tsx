@@ -15,14 +15,14 @@ const VerifyOtp = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Extract email from query params or state (adjust as needed)
-  const query = new URLSearchParams(location.search);
-  const initialEmail = query.get("email") || "";
+  // Get OTP data from state
+  const { otp: expectedOtp, otpEmail, otpExpiry } = location.state || {};
 
   const [form, setForm] = useState<VerifyOtpForm>({
-    email: initialEmail,
+    email: otpEmail || "",
     otp: "",
   });
+
   const [errors, setErrors] = useState<VerifyOtpErrors>({});
   const [serverError, setServerError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -43,27 +43,26 @@ const VerifyOtp = () => {
     }
 
     try {
-      await api.post("/account/verifyotp", form);
+      console.log("Submitting OTP verification form:", form);
+
+      // Send all required data to backend
+      await api.post("/account/verify-otp", {
+        email: form.email,
+        otp: form.otp,
+        expectedOtp,
+        otpExpiry,
+      });
+
       setSuccess(true);
-      setTimeout(() => navigate("/resetpassword?email=" + encodeURIComponent(form.email) + "&otp=" + encodeURIComponent(form.otp)), 1500);
-    } catch (err: unknown) {
-      if (
-        typeof err === "object" &&
-        err !== null &&
-        "response" in err &&
-        typeof (err as any).response === "object" &&
-        (err as any).response !== null &&
-        "data" in (err as any).response &&
-        typeof (err as any).response.data === "object" &&
-        (err as any).response.data !== null
-      ) {
-        setServerError(
-          ((err as any).response.data.message as string) ||
-            "OTP verification failed"
-        );
-      } else {
-        setServerError("OTP verification failed");
-      }
+      setTimeout(() => {
+        navigate("/account/resetpassword", {
+          state: { email: form.email },
+        });
+      }, 1000);
+    } catch (err: any) {
+      setServerError(
+        err?.response?.data?.message || "OTP verification failed"
+      );
     }
   };
 
@@ -71,13 +70,9 @@ const VerifyOtp = () => {
     <>
       <h2>Verify OTP</h2>
       <form onSubmit={handleSubmit}>
-        {serverError && (
-          <div className="text-danger">{serverError}</div>
-        )}
+        {serverError && <div className="text-danger">{serverError}</div>}
         {success && (
-          <div className="text-success" style={{ marginBottom: 8 }}>
-            OTP verified. Redirecting...
-          </div>
+          <div className="text-success mb-2">OTP verified. Redirecting...</div>
         )}
         <input type="hidden" name="email" value={form.email} />
         <div className="form-group">
@@ -89,9 +84,7 @@ const VerifyOtp = () => {
             onChange={handleChange}
             required
           />
-          {errors.otp && (
-            <span className="text-danger">{errors.otp}</span>
-          )}
+          {errors.otp && <span className="text-danger">{errors.otp}</span>}
         </div>
         <br />
         <button type="submit" className="btn btn-success">

@@ -44,7 +44,7 @@ const Register = () => {
     }
     try {
       await api.post("/account/register", form);
-      navigate("/login");
+      navigate("/account/login");
     } catch (err: unknown) {
       if (
         typeof err === "object" &&
@@ -176,7 +176,7 @@ const Register = () => {
         <div className="login-remember-forgot1">
           <p>
             Already have an account?{" "}
-            <Link to="/login" className="login-forgot-link1">
+            <Link to="/account/login" className="login-forgot-link1">
               Login
             </Link>
           </p>

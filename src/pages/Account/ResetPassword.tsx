@@ -4,7 +4,6 @@ import api from "../../api/axiosInstance"; import { useNavigate, useLocation } f
 
 type ResetPasswordForm = {
   email: string;
-  otp: string;
   newPassword: string;
   confirmPassword: string;
 };
@@ -18,14 +17,12 @@ const ResetPassword = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Extract email and otp from query params or state (adjust as needed)
-  const query = new URLSearchParams(location.search);
-  const initialEmail = query.get("email") || "";
-  const initialOtp = query.get("otp") || "";
+
+  const initialState = location.state as { email?: string, otp?: string };
+  const emailFromState = initialState?.email;
 
   const [form, setForm] = useState<ResetPasswordForm>({
-    email: initialEmail,
-    otp: initialOtp,
+    email: emailFromState || "",
     newPassword: "",
     confirmPassword: "",
   });
@@ -51,9 +48,12 @@ const ResetPassword = () => {
     }
 
     try {
-      await api.post("/account/resetpassword", form);
+      console.log("Submitting reset password form:", form);
+      const res = await api.post("/account/reset-password", form);
+      console.log("Password reset response:", res.data);
       setSuccess(true);
-      setTimeout(() => navigate("/login"), 2000);
+      // return res;
+      setTimeout(() => navigate("/account/login"), 1000);
     } catch (err: unknown) {
       if (
         typeof err === "object" &&
@@ -90,7 +90,6 @@ const ResetPassword = () => {
           </div>
         )}
         <input type="hidden" name="email" value={form.email} />
-        <input type="hidden" name="otp" value={form.otp} />
 
         <div className="form-group">
           <label>New Password</label>

@@ -3,7 +3,7 @@ import Index from "./Index";
 
 const AdminRoutes = [
   {
-    path: "/admin/",
+    path: "/admin/dashboard",
     element: <Index />,
   },
 ];

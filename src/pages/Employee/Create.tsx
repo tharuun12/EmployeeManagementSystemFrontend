@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import api from "../../api/axiosInstance"; import { useNavigate, Link } from "react-router-dom";
+import api from "../../api/axiosInstance"; 
+import { useNavigate, Link } from "react-router-dom";
 
 type Department = {
   departmentId: number;

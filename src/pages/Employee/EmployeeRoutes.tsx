@@ -15,7 +15,7 @@ const EmployeeRoutes = [
     element: <Create />,
   },
   {
-    path: "/employee/currentmonthinfo",
+    path: "/employee/monthlyreport",
     element: <CurrentMonthInfo />,
   },
   {
@@ -35,7 +35,7 @@ const EmployeeRoutes = [
     element: <Filter />,
   },
   {
-    path: "/employee/profile/:id",
+    path: "/employee/profile",
     element: <Index />,
   },
   {
