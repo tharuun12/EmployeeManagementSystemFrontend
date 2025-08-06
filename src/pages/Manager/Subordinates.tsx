@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import api from "../../api/axiosInstance"; 
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
+
 type Employee = {
   fullName: string;
   email: string;
@@ -12,29 +16,35 @@ type Employee = {
 
 const Subordinates = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     api
-      .get("/manager/subordinates")
+      .get("/manager/subordinates", {
+        params: {  
+          id: localStorage.getItem("userId"),
+        }
+      })
       .then((res) => {
         setEmployees(res.data);
-        setLoading(false);
+        setLoading(true);
       })
       .catch(() => {
         setError("Failed to load subordinates.");
+        setLoading(true);
+      }).finally(() => {
         setLoading(false);
       });
   }, []);
-
+  if (loading) {
+    return <LoadingSpinner />;
+  }
   return (
     <div className="data-section">
       <h2 className="data-title">Subordinates</h2>
       {loading ? (
-        <div className="data-empty">Loading...</div>
-      ) : error ? (
-        <div className="data-empty">{error}</div>
+        <LoadingSpinner />
       ) : employees.length > 0 ? (
         <table className="data-table">
           <thead>

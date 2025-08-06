@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; 
 import { Link } from "react-router-dom";
 
@@ -12,10 +15,10 @@ const ActivityIndex = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const userId = localStorage.getItem("userId");
   useEffect(() => {
     api
-      .get("/api/activity/employees")
+      .get(`/activity/employees`)
       .then((res) => {
         setEmployees(res.data);
         setLoading(false);
@@ -30,7 +33,7 @@ const ActivityIndex = () => {
     <div className="data-section">
       <h2 className="data-title">Employee Activity Tracker</h2>
       {loading ? (
-        <div className="data-empty">Loading...</div>
+        <LoadingSpinner />
       ) : error ? (
         <div className="data-empty">{error}</div>
       ) : employees.length > 0 ? (
@@ -49,8 +52,8 @@ const ActivityIndex = () => {
                 <td>{emp.email}</td>
                 <td>
                   <Link
-                    to={`/activity/loginhistory/${encodeURIComponent(emp.email)}`}
-                    className="btn btn-sm btn-primary"
+                    to={`/activity/loginhistory`}
+                    className="btn-create btn-action"
                   >
                     Login History
                   </Link>

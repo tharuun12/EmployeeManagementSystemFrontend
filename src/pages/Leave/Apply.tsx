@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; import { useNavigate } from "react-router-dom";
 
 type LeaveRequestForm = {
@@ -18,7 +21,7 @@ type LeaveRequestErrors = {
 const LeaveApply = () => {
   const [employee, setEmployee] = useState<{ employeeId: string; fullName: string } | null>(null);
   const [form, setForm] = useState<LeaveRequestForm>({
-    employeeId: "2",
+    employeeId: localStorage.getItem("userId") || "",
     startDate: "",
     endDate: "",
     reason: "",
@@ -99,7 +102,7 @@ const LeaveApply = () => {
 
     try {
       await api.post("/leave/apply", form);
-      navigate(`/leave/myleaves/${form.employeeId}`);
+      navigate(`/leave/myleaves`);
     } catch (err: unknown) {
       if (
         typeof err === "object" &&
@@ -198,7 +201,7 @@ const LeaveApply = () => {
           </div>
         )}
 
-        <button type="submit" className="btn btn-success" disabled={submitting}>
+        <button type="submit" className="btn-approve btn-action" disabled={submitting}>
           {submitting ? "Submitting..." : "Submit Request"}
         </button>
       </form>

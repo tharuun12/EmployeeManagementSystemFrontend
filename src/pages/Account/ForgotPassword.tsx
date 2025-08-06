@@ -2,6 +2,9 @@ import { useState } from "react";
 import axios from "axios";
 import api from "../../api/axiosInstance"; 
 import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 
 type ForgotPasswordForm = {
   email: string;
@@ -13,85 +16,62 @@ type ForgotPasswordErrors = {
 
 const ForgotPassword = () => {
   const [form, setForm] = useState<ForgotPasswordForm>({ email: "" });
-  const [errors, setErrors] = useState<ForgotPasswordErrors>({});
-  const [serverError, setServerError] = useState("");
-  const [success, setSuccess] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
   };
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     e.preventDefault();
-    setServerError("");
-    setSuccess(false);
-
     if (!form.email) {
-      setErrors({ email: "Email is required" });
+      toast.error("Email is required");
+      setLoading(false);
       return;
     }
-
     try {
       const res = await api.post("/account/forgotpassword", form);
-      console.log("Forgot password response:", res.data);
       const OtpData = res.data
-      setSuccess(true);
+      setLoading(false);
+      notifySuccess("OTP sent to your email if it exists in our system.");
       navigate("/account/verifyotp", { state: { otp: OtpData.otp,  otpEmail: OtpData.otpEmail, otpExpiry: OtpData.otpExpiry } });
-    } catch (err: unknown) {
-      if (
-        typeof err === "object" &&
-        err !== null &&
-        "response" in err &&
-        typeof (err as any).response === "object" &&
-        (err as any).response !== null &&
-        "data" in (err as any).response &&
-        typeof (err as any).response.data === "object" &&
-        (err as any).response.data !== null
-      ) {
-        setServerError(
-          ((err as any).response.data.message as string) ||
-            "Failed to send OTP"
-        );
-      } else {
-        setServerError("Failed to send OTP");
-      }
+    } catch (err: any) {
+      setLoading(false);
+      const errorMessage =
+        err?.response?.data?.message;
+      toast.error(errorMessage);
     }
   };
-  console.log("ForgotPassword form state:", form);
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <>
-      <h2>Forgot Password</h2>
+    <div className="create-form">
+      <h2 className="login-title">Forgot Password</h2>
       <form onSubmit={handleSubmit}>
-        {serverError && (
-          <div className="text-danger">{serverError}</div>
-        )}
-        {success && (
-          <div className="text-success" style={{ marginBottom: 8 }}>
-            OTP sent to your email if it exists in our system.
-          </div>
-        )}
-        <div className="form-group">
-          <label>Email</label>
+         <div className="form-group">
+          <label className="form-label" htmlFor="email">Email</label>
           <input
             name="email"
-            type="email"
+            id="email"
             className="form-control"
             value={form.email}
             onChange={handleChange}
             required
           />
-          {errors.email && (
-            <span className="text-danger">{errors.email}</span>
-          )}
+
         </div>
-        <br />
-        <button type="submit" className="btn btn-primary">
+        <div className="form-actions">
+          <button type="submit" className="btn-approve btn-action">
           Send OTP
         </button>
+        </div>
+        
       </form>
-    </>
+    </div>
   );
 };
 

@@ -1,5 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; 
 import { useNavigate } from "react-router-dom";
 
@@ -94,7 +97,7 @@ const ChangePassword = () => {
             />
             <button
               type="button"
-              className="password-toggle-btn"
+              className=""
               style={{ marginLeft: 8 }}
               onClick={() => setShowOld((v) => !v)}
               tabIndex={-1}
@@ -167,7 +170,7 @@ const ChangePassword = () => {
           )}
         </div>
         <br />
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn-create btn-action">
           Change Password
         </button>
       </form>

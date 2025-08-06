@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import api from "../../api/axiosInstance"; 
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
 type Department = {
   departmentName: string;
 };
@@ -48,7 +49,7 @@ const EmployeeProfile = () => {
       <div className="employee-profile-card">
         <h2 className="profile-title">Employee Profile</h2>
         {loading ? (
-          <div className="profile-row">Loading...</div>
+          <LoadingSpinner />
         ) : error ? (
           <div className="profile-row">{error}</div>
         ) : profile ? (

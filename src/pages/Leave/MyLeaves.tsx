@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; 
 type LeaveRequest = {
   startDate: string;
@@ -17,9 +20,9 @@ const MyLeaves = () => {
 
   useEffect(() => {
     api
-      .get("/leave/my/")
+      .get(`/leave/my/${localStorage.getItem("userId")}`)
       .then((res) => {
-        setLeaves(res.data.leaves || res.data); // support both array and {leaves, employeeName}
+        setLeaves(res.data.leaves || res.data); 
         setEmployeeName(res.data.employeeName || "");
         setLoading(false);
       })
@@ -35,7 +38,7 @@ const MyLeaves = () => {
         My Leaves{employeeName ? ` - ${employeeName}` : ""}
       </h2>
       {loading ? (
-        <div className="data-empty">Loading...</div>
+        <LoadingSpinner />
       ) : error ? (
         <div className="data-empty">{error}</div>
       ) : leaves.length > 0 ? (

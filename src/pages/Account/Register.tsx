@@ -2,6 +2,9 @@ import { useState } from "react";
 import axios from "axios";
 import api from "../../api/axiosInstance"; 
 import { useNavigate, Link } from "react-router-dom";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 
 type RegisterForm = {
   email: string;
@@ -25,6 +28,7 @@ const Register = () => {
     phoneNumber: "",
     fullName: "",
   });
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<RegisterErrors>({});
   const [serverError, setServerError] = useState("");
   const navigate = useNavigate();
@@ -43,26 +47,16 @@ const Register = () => {
       return;
     }
     try {
+      setLoading(true);
       await api.post("/account/register", form);
+      notifySuccess("Registration successful! Please log in.");
       navigate("/account/login");
-    } catch (err: unknown) {
-      if (
-        typeof err === "object" &&
-        err !== null &&
-        "response" in err &&
-        typeof (err as any).response === "object" &&
-        (err as any).response !== null &&
-        "data" in (err as any).response &&
-        typeof (err as any).response.data === "object" &&
-        (err as any).response.data !== null
-      ) {
-        setServerError(
-          ((err as any).response.data.message as string) ||
-            "Registration failed"
-        );
-      } else {
-        setServerError("Registration failed");
-      }
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ;
+      notifyError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 

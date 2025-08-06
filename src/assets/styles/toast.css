@@ -1,0 +1,25 @@
+/* toast.css or App.css */
+
+/* Success: green background */
+.Toastify__toast--success {
+  background-color: #38a169; /* Tailwind green-600 */
+  color: white;
+}
+
+/* Error: red background */
+.Toastify__toast--error {
+  background-color: #cc0000; /* Tailwind red-600 */
+  color: white;
+}
+
+/* Info: blue background */
+.Toastify__toast--info {
+  background-color: #3182ce; /* Tailwind blue-600 */
+  color: white;
+}
+
+/* Optional: Toast text style */
+.Toastify__toast-body {
+  font-size: 14px;
+  font-weight: 500;
+}

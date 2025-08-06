@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; 
 import { useNavigate, useParams, Link } from "react-router-dom";
 
@@ -58,7 +61,7 @@ const ManagerApprovals = () => {
   };
 
   if (loading) {
-    return <div className="alert alert-info">Loading...</div>;
+    return <LoadingSpinner />
   }
 
   if (error) {
@@ -99,7 +102,7 @@ const ManagerApprovals = () => {
         <div className="form-actions">
           <button
             type="button"
-            className="btn btn-success"
+            className="btn-approve btn-action"
             disabled={submitting}
             onClick={() => handleAction("Approved")}
           >
@@ -107,14 +110,14 @@ const ManagerApprovals = () => {
           </button>
           <button
             type="button"
-            className="btn btn-danger"
+            className="btn-delete btn-action"
             disabled={submitting}
             onClick={() => handleAction("Rejected")}
             style={{ marginLeft: 8 }}
           >
             Reject
           </button>
-          <Link to="/manager/approvelist" className="btn btn-secondary" style={{ marginLeft: 8 }}>
+          <Link to="/manager/approvelist" className="btn-cancel btn-action" style={{ marginLeft: 8 }}>
             Cancel
           </Link>
         </div>

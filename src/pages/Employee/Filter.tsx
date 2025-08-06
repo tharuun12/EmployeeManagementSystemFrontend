@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import api from "../../api/axiosInstance"; 
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
+
 type Department = {
   departmentId: number;
   departmentName: string;
@@ -19,17 +23,20 @@ const EmployeeFilter = () => {
   const [roles, setRoles] = useState<string[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [filters, setFilters] = useState({ departmentId: "", role: "" });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   // Fetch departments and roles on mount
   useEffect(() => {
-    api.get("/departments")
+    setLoading(false)
+    api.get("/department/create")
       .then(res => setDepartments(res.data))
-      .catch(() => setDepartments([]));
+      .catch(() => setDepartments([]))
+      .finally(() => setLoading(false));
     api.get("/roles")
       .then(res => setRoles(res.data))
-      .catch(() => setRoles([]));
+      .catch(() => setRoles([]))
+      .finally(() => setLoading(false));
   }, []);
 
   // Fetch employees when filters change
@@ -51,20 +58,19 @@ const EmployeeFilter = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // The useEffect will trigger on filters change
   };
 
   return (
     <div className="employee-filter-page">
       <h2 className="filter-title">Filter Employees</h2>
       <form className="filter-form" onSubmit={handleSubmit}>
-        <div className="row g-3">
-          <div className="col-md-4">
-            <label htmlFor="departmentId" className="form-label">Department</label>
+        <div className="filter-row">
+          <div className="filter-col">
+            <label htmlFor="departmentId" className="filter-label">Department</label>
             <select
               id="departmentId"
               name="departmentId"
-              className="form-select"
+              className="filter-select"
               value={filters.departmentId}
               onChange={handleChange}
             >
@@ -76,12 +82,12 @@ const EmployeeFilter = () => {
               ))}
             </select>
           </div>
-          <div className="col-md-4">
-            <label htmlFor="role" className="form-label">Role</label>
+          <div className="filter-col">
+            <label htmlFor="role" className="filter-label">Role</label>
             <select
               id="role"
               name="role"
-              className="form-select"
+              className="filter-select"
               value={filters.role}
               onChange={handleChange}
             >
@@ -91,8 +97,8 @@ const EmployeeFilter = () => {
               ))}
             </select>
           </div>
-          <div className="col-md-4 d-flex align-items-end">
-            <button type="submit" className="btn btn-primary w-100">
+          <div className="filter-col filter-col-btn">
+            <button type="submit" className="filter-btn">
               Apply Filter
             </button>
           </div>
@@ -102,7 +108,7 @@ const EmployeeFilter = () => {
       <hr className="separator" />
 
       {loading ? (
-        <div className="data-empty">Loading...</div>
+        <LoadingSpinner />
       ) : error ? (
         <div className="data-empty">{error}</div>
       ) : employees.length > 0 ? (

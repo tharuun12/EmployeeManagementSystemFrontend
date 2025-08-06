@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import api from "../../api/axiosInstance"; import { useNavigate, useParams, Link } from "react-router-dom";
+import api from "../../api/axiosInstance"; 
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import { toast } from "react-toastify";
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
 
 type Employee = {
   employeeId: number;
@@ -40,15 +44,18 @@ const EmployeeDelete = () => {
     setError("");
     try {
       await api.delete(`/employees/delete/${employee.employeeId}`);
+      notifySuccess("Employee Delete successfully!");
       navigate("/employee/employeelist");
-    } catch {
-      setError("Failed to delete employee.");
+    } catch (err: any){
+      const errorMessage =
+        err?.response?.data?.message || "Failed to delete employee.";
+      toast.error(errorMessage);
       setDeleting(false);
     }
   };
 
   if (loading) {
-    return <div className="alert alert-info">Loading...</div>;
+    return <LoadingSpinner />
   }
 
   if (error) {
@@ -63,10 +70,10 @@ const EmployeeDelete = () => {
       </p>
       <form onSubmit={handleDelete}>
         <input type="hidden" name="employeeId" value={employee?.employeeId ?? ""} />
-        <button type="submit" className="btn btn-danger" disabled={deleting}>
+        <button type="submit" className="btn-delete btn-action" disabled={deleting}>
           {deleting ? "Deleting..." : "Delete"}
         </button>
-        <Link to="/employee" className="btn btn-secondary" style={{ marginLeft: 8 }}>
+        <Link to="/employee" className="btn-cancel btn-action" style={{ marginLeft: 8 }}>
           Cancel
         </Link>
       </form>

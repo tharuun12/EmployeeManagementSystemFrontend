@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import api from "../../api/axiosInstance"; import { useNavigate, useParams, Link } from "react-router-dom";
+import api from "../../api/axiosInstance"; 
+import { useNavigate, useParams, Link } from "react-router-dom";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 
 type Department = {
   departmentId: number;
@@ -10,50 +14,52 @@ type Department = {
 const DepartmentDelete = () => {
   const { id } = useParams<{ id: string }>();
   const [department, setDepartment] = useState<Department | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!id) {
-      setError("Invalid department ID.");
-      setLoading(false);
+      toast.error("Invalid department ID.");
+      setLoading(true);
       return;
     }
     api
       .get(`/department/delete/${id}`)
       .then((res) => {
         setDepartment(res.data);
-        setLoading(false);
+        setLoading(true);
       })
       .catch(() => {
-        setError("Failed to load department.");
+        toast.error("Failed to load department.");
+        setLoading(true);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, [id]);
 
   const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     e.preventDefault();
     if (!department) return;
     setDeleting(true);
-    setError("");
     try {
       console.log("Deleting department:", department.departmentId);
       await api.delete(`/department/delete/${department.departmentId}`);
+      notifySuccess("Department deleted successfully.");
       navigate("/department");
-    } catch {
-      setError("Failed to delete department.");
-      setDeleting(false);
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ;
+      toast.error(errorMessage);
+    }finally {
+      setLoading(false);
     }
   };
 
   if (loading) {
-    return <div className="alert alert-info">Loading...</div>;
-  }
-
-  if (error) {
-    return <div className="alert alert-danger">{error}</div>;
+    return <LoadingSpinner />;
   }
 
   return (
@@ -64,10 +70,10 @@ const DepartmentDelete = () => {
       </p>
       <form onSubmit={handleDelete}>
         <input type="hidden" name="departmentId" value={department?.departmentId ?? ""} />
-        <button type="submit" className="btn btn-danger" disabled={deleting}>
+        <button type="submit" className=".btn-delete btn-action" disabled={deleting}>
           {deleting ? "Deleting..." : "Yes, Delete"}
         </button>
-        <Link to="/department" className="btn btn-secondary" style={{ marginLeft: 8 }}>
+        <Link to="/department" className="btn-cancel btn-action" style={{ marginLeft: 8 }}>
           Cancel
         </Link>
       </form>

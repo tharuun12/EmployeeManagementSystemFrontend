@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; 
 import Chart from "chart.js/auto";
 import { useRef } from "react";
@@ -148,7 +151,7 @@ const Dashboard = () => {
   }, [data]);
 
   if (loading) {
-    return <div className="data-empty">Loading...</div>;
+    return <LoadingSpinner />;
   }
   if (error || !data) {
     return <div className="data-empty">{error || "No data available."}</div>;
@@ -183,7 +186,7 @@ const Dashboard = () => {
       </div>
 
       <h4 className="mt-5">🧑‍💼 Recent Employees</h4>
-      <table className="table table-striped">
+      <table className="data-table">
         <thead>
           <tr>
             <th>Name</th>
@@ -205,7 +208,7 @@ const Dashboard = () => {
       </table>
 
       <h4 className="mt-5">🏢 Department-wise Employee Count</h4>
-      <table className="table table-bordered">
+      <table className="data-table">
         <thead>
           <tr>
             <th>Department</th>

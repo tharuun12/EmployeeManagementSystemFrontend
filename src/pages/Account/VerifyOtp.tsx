@@ -1,5 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; import { useNavigate, useLocation } from "react-router-dom";
 
 type VerifyOtpForm = {
@@ -87,7 +90,7 @@ const VerifyOtp = () => {
           {errors.otp && <span className="text-danger">{errors.otp}</span>}
         </div>
         <br />
-        <button type="submit" className="btn btn-success">
+        <button type="submit" className="btn-approve btn-action">
           Verify
         </button>
       </form>

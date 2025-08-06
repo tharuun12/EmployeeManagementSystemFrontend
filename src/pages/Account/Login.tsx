@@ -1,7 +1,11 @@
 import { useState } from "react";
 import axios from "axios";
-import api from "../../api/axiosInstance"; 
+import api from "../../api/axiosInstance";
 import { useNavigate, Link } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import { toast } from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
 
 type LoginForm = {
   email: string;
@@ -20,7 +24,9 @@ const Login = () => {
     password: "",
     rememberMe: false,
   });
+  const { user, role, isLoggedIn } = useAuth();
   const [errors, setErrors] = useState<LoginErrors>({});
+  const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
@@ -40,47 +46,38 @@ const Login = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault();
-  setServerError("");
+    e.preventDefault();
+    setServerError("");
 
-  try {
-    console.log("Submitting login form:", form);
-    const response = await api.post("/account/login", form);
+    try {
+      setLoading(true);
+      const response = await api.post("/account/login", form);
 
-    const { token, roles, name, email, employeeId } = response.data;
+      const { token, roles, name, email, employeeId } = response.data;
 
-    localStorage.setItem("token", token);
-    localStorage.setItem("userId", employeeId);
-    localStorage.setItem("user", JSON.stringify({ name, email, roles, employeeId }));
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", employeeId);
+      localStorage.setItem("user", JSON.stringify({ name, email, roles, employeeId }));
 
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    const role = roles[0]; 
-    if (role === "Admin") navigate("/dashboard");
-    else if (role === "Manager") navigate("/employee/profile");
-    else navigate("/employee/profile");
-
-  } catch (err: unknown) {
-    if (
-      typeof err === "object" &&
-      err !== null &&
-      "response" in err &&
-      typeof (err as any).response === "object" &&
-      (err as any).response !== null &&
-      "data" in (err as any).response &&
-      typeof (err as any).response.data === "object" &&
-      (err as any).response.data !== null
-    ) {
-      setServerError(
-        ((err as any).response.data.message as string) || "Login failed"
-      );
-    } else {
-      setServerError("Login failed");
+      const role = roles[0];
+      notifySuccess("Login successful!");
+      if (role === "Admin") navigate("/dashboard");
+      else if (role === "Manager") navigate("/employee/profile");
+      else navigate("/employee/profile");
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message;
+      notifyError(errorMessage);
+    } finally {
+      setLoading(false);
     }
+  };
+  if (loading) {
+    return <LoadingSpinner />;
   }
-};
-
-
+  
   return (
     <div className="login-container">
       <h2 className="login-title">Welcome Back</h2>
@@ -123,9 +120,8 @@ const Login = () => {
               tabIndex={-1}
             >
               <i
-                className={`fas ${
-                  showPassword ? "fa-eye-slash" : "fa-eye"
-                }`}
+                className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"
+                  }`}
                 id="passwordToggleIcon"
               ></i>
             </button>

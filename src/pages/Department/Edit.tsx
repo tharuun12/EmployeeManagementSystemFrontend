@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axiosInstance";
 import { useNavigate, useParams, Link } from "react-router-dom";
-
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 type Manager = {
   employeeId: number;
   fullName: string;
@@ -28,11 +30,10 @@ const DepartmentEdit = () => {
   const [errors, setErrors] = useState<DepartmentErrors>({});
   const [serverError, setServerError] = useState("");
   const [managers, setManagers] = useState<Manager[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch department and managers
     const fetchData = async () => {
       try {
         const [deptRes, mgrRes] = await Promise.all([
@@ -40,16 +41,17 @@ const DepartmentEdit = () => {
           api.get(`/department/edit/${id}`),
 
         ]);
-        console.log(deptRes.data, mgrRes.data);
         setForm({
           departmentId: mgrRes.data.departmentId,
           departmentName: mgrRes.data.departmentName,
           managerId: mgrRes.data.managerId?.toString() ?? "",
         });
         setManagers(Array.isArray(deptRes.data) ? deptRes.data : []);
-        setLoading(false);
+        setLoading(true);
       } catch {
         setServerError("Failed to load department data.");
+        setLoading(true);
+      } finally {
         setLoading(false);
       }
     };
@@ -65,8 +67,6 @@ const DepartmentEdit = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setServerError("");
-    // Basic validation
     if (!form.departmentName) {
       setErrors((prev) => ({
         ...prev,
@@ -74,43 +74,33 @@ const DepartmentEdit = () => {
       }));
       return;
     }
-    if (!form.managerId) {
-      setErrors((prev) => ({
-        ...prev,
-        managerId: "Manager is required",
-      }));
-      return;
-    }
+    
     try {
-      await api.put(`/department/edit/${form.departmentId}`, {
+      setLoading(true);
+      const payload: any = {
+        DepartmentName: form.departmentName,
         departmentId: form.departmentId,
-        departmentName: form.departmentName,
-        managerId: Number(form.managerId),
-      });
-      navigate("/department");
-    } catch (err: unknown) {
-      if (
-        typeof err === "object" &&
-        err !== null &&
-        "response" in err &&
-        typeof (err as any).response === "object" &&
-        (err as any).response !== null &&
-        "data" in (err as any).response &&
-        typeof (err as any).response.data === "object" &&
-        (err as any).response.data !== null
-      ) {
-        setServerError(
-          ((err as any).response.data.message as string) ||
-            "Failed to update department"
-        );
-      } else {
-        setServerError("Failed to update department");
+      };
+
+      if (form.managerId) {
+        payload.ManagerId = Number(form.managerId);
       }
+      await api.put(`/department/edit/${form.departmentId}`, {
+        ...payload,
+      });
+      notifySuccess("Department Updated successfully!");
+      navigate("/department");
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ;
+      notifyError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) {
-    return <div className="alert alert-info">Loading...</div>;
+    if (loading) {
+    return <LoadingSpinner />;
   }
 
   return (
@@ -151,25 +141,22 @@ const DepartmentEdit = () => {
             className="form-control"
             value={form.managerId}
             onChange={handleChange}
-            required
+            
           >
-            <option value="">-- Select Manager --</option>
-            {managers?.map((manager) => (
+            <option value="">-- No Manager Assigned --</option>
+            {managers.map((manager) => (
               <option key={manager.employeeId} value={manager.employeeId}>
                 {manager.fullName}
               </option>
             ))}
           </select>
-          {errors.managerId && (
-            <span className="form-error">{errors.managerId}</span>
-          )}
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="btn btn-success">
+          <button type="submit" className="btn-approve btn-action">
             Update
           </button>
-          <Link to="/department" className="btn btn-secondary">
+          <Link to="/department" className="btn-cancel btn-action">
             Cancel
           </Link>
         </div>

@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; import { Link } from "react-router-dom";
 
 type Employee = {
@@ -47,7 +50,7 @@ const AdminEmployeeList = () => {
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan={5}>Loading...</td>
+              <td colSpan={5}><LoadingSpinner /></td>
             </tr>
           ) : error ? (
             <tr>
@@ -69,7 +72,7 @@ const AdminEmployeeList = () => {
                   </Link>
                   <Link
                     to={`/admin/delete/${emp.employeeId}`}
-                    className="btn btn-danger btn-sm"
+                    className="btn-delete btn-action btn-sm"
                     style={{ marginLeft: 8 }}
                   >
                     Delete

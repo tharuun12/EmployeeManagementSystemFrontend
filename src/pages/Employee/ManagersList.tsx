@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; 
 type Manager = {
   employeeId: number;
@@ -30,7 +33,7 @@ const ManagersList = () => {
     <div className="data-section">
       <h2 className="data-title">Manager Details</h2>
       {loading ? (
-        <div className="data-empty">Loading...</div>
+        <LoadingSpinner />
       ) : error ? (
         <div className="data-empty">{error}</div>
       ) : managers.length > 0 ? (

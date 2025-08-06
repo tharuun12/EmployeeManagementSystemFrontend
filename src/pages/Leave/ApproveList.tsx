@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; import { Link } from "react-router-dom";
 
 type Employee = {
@@ -37,7 +40,7 @@ const LeaveApproveList = () => {
     <div className="data-section">
       <h2 className="data-title">Pending Leave Approvals</h2>
       {loading ? (
-        <div className="alert alert-warning text-center mt-3">Loading...</div>
+        <LoadingSpinner />
       ) : error ? (
         <div className="alert alert-warning text-center mt-3">{error}</div>
       ) : leaves.length > 0 ? (

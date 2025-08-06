@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import api from "../../api/axiosInstance"; import { useNavigate, useParams, Link } from "react-router-dom";
-
+import api from "../../api/axiosInstance"; 
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import { toast } from "react-toastify";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 type Department = {
   departmentId: number;
   departmentName: string;
@@ -51,15 +54,12 @@ const EmployeeEdit = () => {
     // Fetch employee, departments, and roles
   const fetchData = async () => {
     try {
+      setLoading(true);
       const [empRes, deptRes, roleRes] = await Promise.all([
         api.get(`/employees/edit/${id}`),
         api.get("/department"),
         api.get("/roles"),
       ]);
-
-      console.log("Employee:", empRes.data);
-      console.log("Departments:", deptRes.data);
-      console.log("Roles:", roleRes.data);
 
       const empData = empRes.data;
 
@@ -73,8 +73,6 @@ const EmployeeEdit = () => {
         isActive: empData.employee.isActive ? "true" : "false",
         leaveBalance: empData.employee.leaveBalance?.toString() || "",
       });
-      console.log("Form Data:", form);
-
       setDepartments(deptRes.data || []);
       setRoles(roleRes.data || []);
       setLoading(false);
@@ -94,9 +92,9 @@ const EmployeeEdit = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setLoading(true);
     e.preventDefault();
     setServerError("");
-    // Basic validation
     if (!form.fullName) {
       setErrors(prev => ({ ...prev, fullName: "Full Name is required" }));
       return;
@@ -138,31 +136,20 @@ const EmployeeEdit = () => {
         isActive: form.isActive === "true",
         leaveBalance: Number(form.leaveBalance),
       });
+      notifySuccess("Employee Updated successfully!");
       navigate("/employee/employeelist");
-    } catch (err: unknown) {
-      if (
-        typeof err === "object" &&
-        err !== null &&
-        "response" in err &&
-        typeof (err as any).response === "object" &&
-        (err as any).response !== null &&
-        "data" in (err as any).response &&
-        typeof (err as any).response.data === "object" &&
-        (err as any).response.data !== null
-      ) {
-        setServerError(
-          ((err as any).response.data.message as string) ||
-            "Failed to update employee"
-        );
-      } else {
-        setServerError("Failed to update employee");
-      }
+      setLoading(false);
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ;
+      toast.error(errorMessage);
+      setLoading(false);
     }
   };
-
   if (loading) {
-    return <div className="alert alert-info">Loading...</div>;
+    return <LoadingSpinner />;
   }
+
 
   return (
     <div className="create-form">
@@ -295,8 +282,8 @@ const EmployeeEdit = () => {
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="btn btn-success">Update</button>
-          <Link to="/employee" className="btn btn-secondary">Cancel</Link>
+          <button type="submit" className="btn-approve btn-action">Update</button>
+          <Link to="/employee" className="btn-cancel btn-action">Cancel</Link>
         </div>
       </form>
     </div>

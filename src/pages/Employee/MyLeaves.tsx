@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; 
 import { useParams } from "react-router-dom";
 type LeaveRequest = {
@@ -40,7 +43,7 @@ const MyLeaves = () => {
     <div className="my-leaves-page">
       <h2 className="leaves-heading">My Leaves - This Month</h2>
       {loading ? (
-        <div className="alert alert-info no-leaves-alert">Loading...</div>
+        <LoadingSpinner />
       ) : error ? (
         <div className="alert alert-info no-leaves-alert">{error}</div>
       ) : leaves.length > 0 ? (

@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; 
 type Department = {
   departmentName: string;
@@ -44,7 +47,7 @@ const ManagerProfile = () => {
           {profile?.employee.role ? `${profile.employee.role} Profile` : "Profile"}
         </h2>
         {loading ? (
-          <div className="profile-row">Loading...</div>
+          <LoadingSpinner />
         ) : error ? (
           <div className="profile-row">{error}</div>
         ) : profile ? (

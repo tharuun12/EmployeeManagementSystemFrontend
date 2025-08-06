@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import api from "../../api/axiosInstance"; 
 import { Link } from "react-router-dom";
-
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
 type Manager = {
   fullName: string;
 };
@@ -15,33 +17,37 @@ type Department = {
 
 const DepartmentList = () => {
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     api
       .get("/department/")
       .then((res) => {
-        console.log(res.data);
         setDepartments(res.data);
-        setLoading(false);
+        setLoading(true);
       })
       .catch(() => {
+        toast.error("Failed to load departments.");
         setError("Failed to load departments.");
+        setLoading(true);
+      }).finally(() => {
         setLoading(false);
       });
   }, []);
 
+
   return (
     <div className="data-section">
       <h2 className="data-title">Departments</h2>
-      <div className="d-flex justify-content-end mb-3">
-        <Link className="btn btn-primary" to="/department/create">
-          Create New Department
+
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
+        <Link className="btn-action btn-create" style={{ fontSize: 18 }} to="/department/create">
+          Add New Department
         </Link>
       </div>
       {loading ? (
-        <div className="data-empty">Loading...</div>
+        <LoadingSpinner />
       ) : error ? (
         <div className="data-empty">{error}</div>
       ) : departments.length > 0 ? (
@@ -51,7 +57,8 @@ const DepartmentList = () => {
               <th>ID</th>
               <th>Name</th>
               <th>Manager</th>
-              <th>Actions</th>
+              <th>Edit</th>
+              <th>Delete</th>
             </tr>
           </thead>
           <tbody>
@@ -59,17 +66,20 @@ const DepartmentList = () => {
               <tr key={item.departmentId}>
                 <td>{item.departmentId}</td>
                 <td>{item.departmentName}</td>
-                <td>{item.manager?.fullName || ""}</td>
+                <td>{item.manager?.fullName || "No Manager"}</td>
                 <td>
                   <Link
                     to={`/department/edit/${item.departmentId}`}
-                    className="btn btn-sm btn-warning"
+                    className="btn-edit btn-action"
                   >
                     Edit
                   </Link>
+                  
+                </td>
+                <td>
                   <Link
                     to={`/department/delete/${item.departmentId}`}
-                    className="btn btn-sm btn-danger"
+                    className="btn-delete btn-action"
                     style={{ marginLeft: 8 }}
                   >
                     Delete

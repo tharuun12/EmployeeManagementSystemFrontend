@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; import { useParams } from "react-router-dom";
 
 type LoginActivityLog = {
@@ -35,20 +38,19 @@ const formatSessionDuration = (duration: string | null | undefined, logoutTime: 
 };
 
 const LoginHistory = () => {
-  const { userId } = useParams<{ userId?: string }>();
   const [logs, setLogs] = useState<LoginActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    let url = "/activity/loginhistory";
-    if (userId) {
-      url += `/${encodeURIComponent(userId)}`;
-    }
+    let url = `/Activity/login-history/${userId}`;
+  
     api
       .get(url)
       .then((res) => {
-        setLogs(res.data);
+        setLogs(res.data.logs);
+        console.log(res.data);
         setLoading(false);
       })
       .catch(() => {
@@ -61,7 +63,7 @@ const LoginHistory = () => {
     <div className="data-section">
       <h2 className="data-title">Login History</h2>
       {loading ? (
-        <div className="data-empty">Loading...</div>
+        <LoadingSpinner />
       ) : error ? (
         <div className="data-empty">{error}</div>
       ) : logs.length > 0 ? (

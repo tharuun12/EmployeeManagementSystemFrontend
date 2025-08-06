@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; import { useParams } from "react-router-dom";
 
 type UserActivityLog = {
@@ -44,7 +47,7 @@ const RecentActivity = () => {
     <div className="data-section">
       <h2 className="data-title">Recent Activity</h2>
       {loading ? (
-        <div className="data-empty">Loading...</div>
+        <LoadingSpinner />
       ) : error ? (
         <div className="data-empty">{error}</div>
       ) : activities.length > 0 ? (

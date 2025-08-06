@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import api from "../../api/axiosInstance"; 
+import api from "../../api/axiosInstance";
 import { useNavigate, Link } from "react-router-dom";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import { toast } from "react-toastify";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
+
 
 type Department = {
   departmentId: number;
   departmentName: string;
 };
+
 
 type EmployeeForm = {
   fullName: string;
@@ -28,6 +33,7 @@ type EmployeeErrors = {
   leaveBalance?: string;
 };
 
+
 const EmployeeCreate = () => {
   const [form, setForm] = useState<EmployeeForm>({
     fullName: "",
@@ -38,50 +44,50 @@ const EmployeeCreate = () => {
     isActive: "true",
     leaveBalance: "",
   });
-  const [errors, setErrors] = useState<EmployeeErrors>({});
+  const [errors, notifyError] = useState<EmployeeErrors>({});
   const [serverError, setServerError] = useState("");
   const [departments, setDepartments] = useState<Department[]>([]);
   const [roles, setRoles] = useState<string[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch departments
     api.get("/department")
       .then(res => setDepartments(res.data))
       .catch(() => setDepartments([]));
-    // Fetch roles
     api.get("/roles")
       .then(res => setRoles(res.data))
       .catch(() => setRoles([]));
   }, []);
-  console.log("roles", roles);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
+    notifyError({ ...errors, [e.target.name]: "" });
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError("");
+    if (form.phoneNumber && !/^\d{10}$/.test(form.phoneNumber)) {
+      toast.error("Phone Number must be exactly 10 digits");
+      return;
+    }
     if (!form.fullName) {
-      setErrors(prev => ({ ...prev, fullName: "Full Name is required" }));
+      toast.error("Full Name is required");
       return;
     }
     if (!form.email) {
-      setErrors(prev => ({ ...prev, email: "Email is required" }));
+      toast.error("Email is required");
       return;
     }
     if (!form.role) {
-      setErrors(prev => ({ ...prev, role: "Role is required" }));
+      toast.error("Role is required");
       return;
     }
     if (!form.departmentId) {
-      setErrors(prev => ({ ...prev, departmentId: "Department is required" }));
+      toast.error("Department is required");
       return;
     }
     if (!form.leaveBalance) {
-      setErrors(prev => ({ ...prev, leaveBalance: "Leave Balance is required" }));
+      toast.error("Leave Balance is required");
       return;
     }
     try {
@@ -90,29 +96,16 @@ const EmployeeCreate = () => {
         email: form.email,
         phoneNumber: form.phoneNumber,
         role: form.role,
-        departmentId: Number(form.departmentId),
+        departmentId: parseInt(form.departmentId, 10),
         isActive: form.isActive === "true",
-        leaveBalance: Number(form.leaveBalance),
+        leaveBalance: parseFloat(form.leaveBalance),
       });
+      notifySuccess("Employee created successfully!");
       navigate("/employee/employeelist");
-    } catch (err: unknown) {
-      if (
-        typeof err === "object" &&
-        err !== null &&
-        "response" in err &&
-        typeof (err as any).response === "object" &&
-        (err as any).response !== null &&
-        "data" in (err as any).response &&
-        typeof (err as any).response.data === "object" &&
-        (err as any).response.data !== null
-      ) {
-        setServerError(
-          ((err as any).response.data.message as string) ||
-            "Failed to create employee"
-        );
-      } else {
-        setServerError("Failed to create employee");
-      }
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ;
+      toast.error(errorMessage);
     }
   };
 
@@ -245,8 +238,8 @@ const EmployeeCreate = () => {
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="btn btn-success">Create</button>
-          <Link to="/employee" className="btn btn-secondary">Cancel</Link>
+          <button type="submit" className="btn-approve btn-action">Create</button>
+          <Link to="/employee" className="btn-cancel btn-action">Cancel</Link>
         </div>
       </form>
     </div>

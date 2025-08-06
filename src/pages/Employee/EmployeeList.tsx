@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import api from "../../api/axiosInstance"; import { Link, useNavigate } from "react-router-dom";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+import LoadingSpinner  from "../../components/shared/LoadingSpinner";
+import api from "../../api/axiosInstance"; 
+import { Link, useNavigate } from "react-router-dom";
+import Button from "../../components/shared/Button";
 
 type Department = {
   departmentName: string;
@@ -40,11 +45,13 @@ const EmployeeList = () => {
     <div className="data-section">
       <h2 className="data-title">Employees</h2>
 
-      <div className="d-flex justify-content-end mb-3">
-        <Link className="btn btn-primary" to="/employee/create">
+
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16}}>
+        <Link className="btn-action btn-create" style={{ fontSize: 18 }} to="/employee/create">
           Add New Employee
         </Link>
       </div>
+    
 
       <table className="data-table">
         <thead>
@@ -64,7 +71,7 @@ const EmployeeList = () => {
           {loading ? (
             <tr>
               <td colSpan={9} className="data-empty">
-                Loading...
+                <LoadingSpinner />
               </td>
             </tr>
           ) : error ? (
@@ -93,7 +100,7 @@ const EmployeeList = () => {
                 <td>{e.leaveBalance}</td>
                 <td>
                   <Link
-                    className="btn btn-warning btn-sm me-1 d-inline-block"
+                    className="btn-edit btn-action"
                     to={`/employee/edit/${e.employeeId}`}
                   >
                     Edit
@@ -101,7 +108,7 @@ const EmployeeList = () => {
                 </td>
                 <td>
                   <Link
-                    className="btn btn-danger btn-sm d-inline-block"
+                    className="btn-delete btn-action"
                     to={`/employee/delete/${e.employeeId}`}
                   >
                     Delete
