@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
-import LoadingSpinner  from "../../components/shared/LoadingSpinner";
-import api from "../../api/axiosInstance"; 
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
+import api from "../../api/axiosInstance";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "../../components/shared/Button";
 
@@ -29,29 +29,32 @@ const EmployeeList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    setLoading(false);
     api
       .get("/employees")
       .then((res) => {
         setEmployees(res.data);
-        setLoading(false);
       })
       .catch(() => {
         setError("Failed to load employees.");
-        setLoading(false);
+      }).finally(() => {
+        setLoading(true);
       });
   }, []);
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="data-section">
       <h2 className="data-title">Employees</h2>
 
 
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16}}>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
         <Link className="btn-action btn-create" style={{ fontSize: 18 }} to="/employee/create">
           Add New Employee
         </Link>
       </div>
-    
 
       <table className="data-table">
         <thead>

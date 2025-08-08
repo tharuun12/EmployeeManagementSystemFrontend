@@ -31,6 +31,8 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<RegisterErrors>({});
   const [serverError, setServerError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,16 +55,19 @@ const Register = () => {
       navigate("/account/login");
     } catch (err: any) {
       const errorMessage =
-        err?.response?.data?.message ;
-      notifyError(errorMessage);
+        err?.response?.data?.errors;
+        console.error("Registration error:", err);
+      toast.error(`${errorMessage}`);
     } finally {
       setLoading(false);
     }
   };
 
-  // Password visibility toggles
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+
 
   return (
     <div className="register-container">

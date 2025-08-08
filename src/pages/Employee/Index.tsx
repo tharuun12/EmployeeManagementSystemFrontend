@@ -34,7 +34,6 @@ const EmployeeProfile = () => {
       }
       })
       .then((res) => {
-      console.log(res.data);
       setProfile(res.data);
       setLoading(false);
       })

@@ -28,20 +28,20 @@ const ForgotPassword = () => {
     e.preventDefault();
     if (!form.email) {
       toast.error("Email is required");
-      setLoading(false);
       return;
     }
     try {
+      setLoading(true);
       const res = await api.post("/account/forgotpassword", form);
       const OtpData = res.data
-      setLoading(false);
       notifySuccess("OTP sent to your email if it exists in our system.");
       navigate("/account/verifyotp", { state: { otp: OtpData.otp,  otpEmail: OtpData.otpEmail, otpExpiry: OtpData.otpExpiry } });
     } catch (err: any) {
-      setLoading(false);
       const errorMessage =
         err?.response?.data?.message;
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
   if (loading) {

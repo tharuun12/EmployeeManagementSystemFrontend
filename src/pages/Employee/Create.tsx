@@ -4,7 +4,7 @@ import api from "../../api/axiosInstance";
 import { useNavigate, Link } from "react-router-dom";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
 import { toast } from "react-toastify";
-import LoadingSpinner  from "../../components/shared/LoadingSpinner";
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
 
 
 type Department = {
@@ -76,6 +76,10 @@ const EmployeeCreate = () => {
     }
     if (!form.email) {
       toast.error("Email is required");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      toast.error("Invalid email format");
       return;
     }
     if (!form.role) {

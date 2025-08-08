@@ -1,9 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
-import LoadingSpinner  from "../../components/shared/LoadingSpinner";
-import api from "../../api/axiosInstance"; 
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
+import api from "../../api/axiosInstance";
 import { useNavigate } from "react-router-dom";
 
 type ChangePasswordForm = {
@@ -31,6 +31,8 @@ const ChangePassword = () => {
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,33 +48,24 @@ const ChangePassword = () => {
       return;
     }
     try {
+      setLoading(true);
       await api.post("/account/change-password", {
         oldPassword: form.oldPassword,
         newPassword: form.newPassword,
         confirmPassword: form.confirmPassword,
         Email: user?.email,
       });
+      notifySuccess("Password changed successfully");
       navigate("/");
-    } catch (err: unknown) {
-      if (
-        typeof err === "object" &&
-        err !== null &&
-        "response" in err &&
-        typeof (err as any).response === "object" &&
-        (err as any).response !== null &&
-        "data" in (err as any).response &&
-        typeof (err as any).response.data === "object" &&
-        (err as any).response.data !== null
-      ) {
-        setServerError(
-          ((err as any).response.data.message as string) ||
-            "Change password failed"
-        );
-      } else {
-        setServerError("Change password failed");
-      }
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message;
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
+
 
   return (
     <div className="create-form">
@@ -84,7 +77,7 @@ const ChangePassword = () => {
           </div>
         )}
         <div className="form-group">
-          <label htmlFor="oldPassword">OldPassword</label>
+          <label htmlFor="oldPassword">Old Password</label>
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
               name="oldPassword"
@@ -97,7 +90,7 @@ const ChangePassword = () => {
             />
             <button
               type="button"
-              className=""
+              className="password-toggle-btn"
               style={{ marginLeft: 8 }}
               onClick={() => setShowOld((v) => !v)}
               tabIndex={-1}
@@ -113,7 +106,7 @@ const ChangePassword = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="newPassword">NewPassword</label>
+          <label htmlFor="newPassword">New Password</label>
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
               name="newPassword"
@@ -142,7 +135,7 @@ const ChangePassword = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="confirmPassword">ConfirmPassword</label>
+          <label htmlFor="confirmPassword">Confirm Password</label>
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
               name="confirmPassword"
@@ -169,10 +162,12 @@ const ChangePassword = () => {
             <span className="text-danger">{errors.confirmPassword}</span>
           )}
         </div>
-        <br />
-        <button type="submit" className="btn-create btn-action">
-          Change Password
-        </button>
+        <div className="form-actions">
+          <button type="submit" className="btn-approve btn-action ">
+            Change Password
+          </button>
+        </div>
+
       </form>
     </div>
   );

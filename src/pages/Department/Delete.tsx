@@ -45,7 +45,6 @@ const DepartmentDelete = () => {
     if (!department) return;
     setDeleting(true);
     try {
-      console.log("Deleting department:", department.departmentId);
       await api.delete(`/department/delete/${department.departmentId}`);
       notifySuccess("Department deleted successfully.");
       navigate("/department");

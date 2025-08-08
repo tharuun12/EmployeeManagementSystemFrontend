@@ -73,7 +73,7 @@ const EmployeeDelete = () => {
         <button type="submit" className="btn-delete btn-action" disabled={deleting}>
           {deleting ? "Deleting..." : "Delete"}
         </button>
-        <Link to="/employee" className="btn-cancel btn-action" style={{ marginLeft: 8 }}>
+        <Link to="/employee/employeelist" className="btn-cancel btn-action" style={{ marginLeft: 8 }}>
           Cancel
         </Link>
       </form>

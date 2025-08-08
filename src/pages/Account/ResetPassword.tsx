@@ -34,6 +34,8 @@ const ResetPassword = () => {
   const [success, setSuccess] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -51,51 +53,33 @@ const ResetPassword = () => {
     }
 
     try {
-      console.log("Submitting reset password form:", form);
+      setLoading(true);
       const res = await api.post("/account/reset-password", form);
-      console.log("Password reset response:", res.data);
       setSuccess(true);
-      // return res;
+      notifySuccess("Password reset successful.");
       setTimeout(() => navigate("/account/login"), 1000);
-    } catch (err: unknown) {
-      if (
-        typeof err === "object" &&
-        err !== null &&
-        "response" in err &&
-        typeof (err as any).response === "object" &&
-        (err as any).response !== null &&
-        "data" in (err as any).response &&
-        typeof (err as any).response.data === "object" &&
-        (err as any).response.data !== null
-      ) {
-        setServerError(
-          ((err as any).response.data.message as string) ||
-            "Reset password failed"
-        );
-      } else {
-        setServerError("Reset password failed");
-      }
+    } catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.errors ;
+      console.error("Reset password error:", errorMessage);
+      notifyError(errorMessage[0]);
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <>
-      <h2>Reset Password</h2>
+    <div className="create-form">
+      <h2 className="login-title">Reset Password</h2>
       <form onSubmit={handleSubmit}>
-        {serverError && (
-          <div className="text-danger" style={{ marginBottom: 8 }}>
-            {serverError}
-          </div>
-        )}
-        {success && (
-          <div className="text-success" style={{ marginBottom: 8 }}>
-            Password reset successful. Redirecting to login...
-          </div>
-        )}
         <input type="hidden" name="email" value={form.email} />
 
         <div className="form-group">
-          <label>New Password</label>
+          <label className="form-label">New Password</label>
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
               name="newPassword"
@@ -123,7 +107,7 @@ const ResetPassword = () => {
         </div>
 
         <div className="form-group">
-          <label>Confirm Password</label>
+          <label className="form-label">Confirm Password</label>
           <div style={{ display: "flex", alignItems: "center" }}>
             <input
               name="confirmPassword"
@@ -149,14 +133,13 @@ const ResetPassword = () => {
             <span className="text-danger">{errors.confirmPassword}</span>
           )}
         </div>
-        <br />
-        <div className="form-actions ">
-          <button type="submit" className="btn btn-primary">
+        <div className="form-actions">
+          <button type="submit" className="btn-approve btn-action">
             Reset Password
           </button>
         </div>
       </form>
-    </>
+    </div>
   );
 };
 

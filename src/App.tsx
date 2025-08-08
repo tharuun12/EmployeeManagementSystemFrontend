@@ -12,7 +12,7 @@ const App = () => {
 
   return (
     <>
-      <Navbar />  {/* Show Navbar above all routes */}
+      <Navbar />  
       {routing}
       <ToastContainer />
 

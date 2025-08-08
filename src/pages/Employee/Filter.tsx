@@ -105,7 +105,6 @@ const EmployeeFilter = () => {
         </div>
       </form>
 
-      <hr className="separator" />
 
       {loading ? (
         <LoadingSpinner />

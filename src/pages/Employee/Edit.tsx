@@ -116,16 +116,6 @@ const EmployeeEdit = () => {
       return;
     }
     try {
-      console.log({id: form?.employeeId}, {
-        employeeId: form.employeeId,
-        fullName: form.fullName,
-        email: form.email,
-        phoneNumber: form.phoneNumber,
-        role: form.role,
-        departmentId: Number(form.departmentId),
-        isActive: form.isActive === "true",
-        leaveBalance: Number(form.leaveBalance),
-      });
       await api.put(`/employees/edit/${form.employeeId}`, {
         employeeId: form.employeeId,
         fullName: form.fullName,

@@ -50,7 +50,6 @@ const LoginHistory = () => {
       .get(url)
       .then((res) => {
         setLogs(res.data.logs);
-        console.log(res.data);
         setLoading(false);
       })
       .catch(() => {

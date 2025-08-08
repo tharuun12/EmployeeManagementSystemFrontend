@@ -122,7 +122,7 @@ const ManagerApprovals = () => {
           </Link>
         </div>
         {error && (
-          <div className="alert alert-danger" style={{ marginTop: 8 }}>
+          <div className="data-empty" style={{ marginTop: 8 }}>
             {error}
           </div>
         )}

@@ -25,9 +25,6 @@ const MyLeaves = () => {
         params: {
           employeeId: localStorage.getItem("employeeId"),
         },
-        // params: {
-        //   employeeId: id,
-        // },
       })
       .then((res) => {
         setLeaves(res.data);
@@ -36,19 +33,21 @@ const MyLeaves = () => {
       .catch(() => {
         setError("Failed to load leave requests.");
         setLoading(false);
+      }).finally(() => {
+        setLoading(true);
       });
   }, [id]);
 
+    if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
-    <div className="my-leaves-page">
-      <h2 className="leaves-heading">My Leaves - This Month</h2>
-      {loading ? (
-        <LoadingSpinner />
-      ) : error ? (
-        <div className="alert alert-info no-leaves-alert">{error}</div>
-      ) : leaves.length > 0 ? (
-        <table className="table table-bordered table-striped leaves-table">
-          <thead className="table-header">
+    <div className="data-section">
+      <h2 className="data-title">My Leaves - This Month</h2>
+      {leaves.length > 0 ? (
+        <table className="data-table">
+          <thead >
             <tr>
               <th>From</th>
               <th>To</th>
@@ -76,7 +75,7 @@ const MyLeaves = () => {
           </tbody>
         </table>
       ) : (
-        <div className="alert alert-info no-leaves-alert">
+        <div className="data-empty ">
           You have not applied for any leaves this month.
         </div>
       )}

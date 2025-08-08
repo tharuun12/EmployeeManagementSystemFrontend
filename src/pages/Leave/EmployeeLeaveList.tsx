@@ -71,7 +71,7 @@ const EmployeeLeaveList = () => {
                 <td>
                   <Link
                     to={`/leave/approvals/${leave.leaveRequestId}`}
-                    className="btn btn-sm btn-outline-primary"
+                    className=".btn-action .btn-create"
                   >
                     Review
                   </Link>
@@ -81,7 +81,7 @@ const EmployeeLeaveList = () => {
           </tbody>
         </table>
       ) : (
-        <div className="data-empty alert alert-warning text-center mt-3">
+        <div className="data-empty">
           No pending leave requests to approve.
         </div>
       )}

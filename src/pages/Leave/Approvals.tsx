@@ -47,10 +47,6 @@ const LeaveApprovals = () => {
     setSubmitting(true);
     setError("");
     try {
-      console.log({
-        id: leave.leaveRequestId,
-        status,
-      })
       await api.post(`/leave/approved/${leave.leaveRequestId}`, {
         id: leave.leaveRequestId,
         status: status.toLowerCase(),

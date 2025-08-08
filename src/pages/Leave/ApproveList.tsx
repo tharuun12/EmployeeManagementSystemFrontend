@@ -23,6 +23,7 @@ const LeaveApproveList = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setLoading(false);
     api
       .get("/leave/pending")
       .then((res) => {
@@ -32,13 +33,14 @@ const LeaveApproveList = () => {
       .catch(() => {
         setError("Failed to load pending leave requests.");
         setLoading(false);
-      });
+      }).finally(() => {
+        setLoading(false);
+      }); 
   }, []);
-  console.log("Pending Leaves:", leaves);
 
   return (
     <div className="data-section">
-      <h2 className="data-title">Pending Leave Approvals</h2>
+      <h2 className="data-title">Pending Leave Approvals </h2>
       {loading ? (
         <LoadingSpinner />
       ) : error ? (
@@ -72,7 +74,7 @@ const LeaveApproveList = () => {
                 <td>
                   <Link
                     to={`/leave/approval/${leave.leaveRequestId}`}
-                    className="btn btn-sm btn-outline-primary"
+                    className="btn-action btn-create"
                   >
                     Review
                   </Link>
@@ -82,7 +84,7 @@ const LeaveApproveList = () => {
           </tbody>
         </table>
       ) : (
-        <div className="alert alert-warning text-center mt-3">
+        <div className="data-empty">
           No pending leave requests to approve.
         </div>
       )}
