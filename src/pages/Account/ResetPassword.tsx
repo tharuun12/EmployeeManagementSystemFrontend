@@ -48,7 +48,7 @@ const ResetPassword = () => {
     setSuccess(false);
 
     if (form.newPassword !== form.confirmPassword) {
-      setErrors({ confirmPassword: "Passwords do not match" });
+      toast.error( "Passwords do not match" );
       return;
     }
 

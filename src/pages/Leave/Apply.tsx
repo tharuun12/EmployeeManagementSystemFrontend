@@ -58,10 +58,7 @@ const LeaveApply = () => {
   // Ensure EndDate cannot be before StartDate
   useEffect(() => {
     if (form.endDate && form.startDate && form.endDate < form.startDate) {
-      setErrors((prev) => ({
-        ...prev,
-        endDate: "End Date cannot be before Start Date",
-      }));
+      toast.error("End Date cannot be before Start Date");
     } else {
       setErrors((prev) => ({ ...prev, endDate: "" }));
     }

@@ -44,7 +44,7 @@ const ChangePassword = () => {
     e.preventDefault();
     setServerError("");
     if (form.newPassword !== form.confirmPassword) {
-      setErrors({ confirmPassword: "Passwords do not match" });
+      toast.error("Passwords do not match");
       return;
     }
     try {

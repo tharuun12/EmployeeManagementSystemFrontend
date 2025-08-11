@@ -44,7 +44,7 @@ const Register = () => {
     e.preventDefault();
     setServerError("");
     if (form.password !== form.confirmPassword) {
-      setErrors({ confirmPassword: "Passwords do not match" });
+      toast.error("Passwords do not match" );
       return;
     }
     try {
@@ -54,7 +54,7 @@ const Register = () => {
       navigate("/account/login");
     } catch (err: any) {
       const errorMessage =
-        err?.response?.data?.errors;
+        err?.response?.data?.errors || err?.response?.data?.message || "Registration failed. Please try again.";
         console.error("Registration error:", err);
       toast.error(`${errorMessage}`);
     } finally {

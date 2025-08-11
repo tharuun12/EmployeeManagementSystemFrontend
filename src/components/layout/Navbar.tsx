@@ -2,9 +2,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import "../../assets/styles/global.css.css"
+import "../../assets/styles/global.css.css";
+import api from "../../api/axiosInstance"; // your axios instance
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+
 const Navbar = () => {
   const { user, role, isLoggedIn } = useAuth();
+  const [loading, setLoading] = React.useState(false);
 
   return (
     <nav className="navbar">
@@ -28,7 +33,7 @@ const Navbar = () => {
 
           {isLoggedIn && role === "Manager" && (
             <>
-              <li><Link to="/employee/profile" className="navbar-link">My Profile</Link></li>
+              <li><Link to="/manager/profile" className="navbar-link">Profile</Link></li>
               <li><Link to="/manager/subordinates" className="navbar-link">Team</Link></li>
               <li><Link to="/leave/employeeleavelist" className="navbar-link">Leave Approvals</Link></li>
               <li><Link to="/leave/apply" className="navbar-link">Apply Leave</Link></li>
@@ -50,8 +55,6 @@ const Navbar = () => {
 
 
       </div>
-
-
       <div className="navbar-links1">
         {!isLoggedIn && (
           <>
@@ -63,9 +66,22 @@ const Navbar = () => {
         {isLoggedIn && (
           <li>
             <button
-              onClick={() => {
-                localStorage.clear();
-                window.location.href = "/account/login";
+              onClick={async () => {
+                try {
+                  setLoading(true);
+                  await api.post("/account/logout");
+
+                  localStorage.clear();
+                  sessionStorage.clear();
+
+                  window.location.href = "/account/login";
+                } catch (err: any) {
+                  const errorMessage =
+                    err?.response?.data?.message || "Failed to change password.";
+                  toast.error(errorMessage);
+                } finally {
+                  setLoading(false);
+                }
               }}
               className="navbar-logout"
             >

@@ -22,9 +22,7 @@ const formatDateTime = (dt: string | null | undefined) => {
 
 const formatSessionDuration = (duration: string | null | undefined, logoutTime: string | null | undefined) => {
   if (!duration) return logoutTime ? "N/A" : "Still Logged In";
-  // If already in "hh:mm:ss" format, return as is
   if (/^\d{2}:\d{2}:\d{2}$/.test(duration)) return duration;
-  // Try to parse ISO 8601 duration (e.g., "PT1H2M3S")
   try {
     const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
     if (match) {
@@ -79,8 +77,8 @@ const LoginHistory = () => {
               <th>Email</th>
               <th>Login Time</th>
               <th>Logout Time</th>
-              <th>IP Address</th>
-              <th>Successful?</th>
+              {/* <th>IP Address</th>
+              <th>Successful</th> */}
               <th>Session Duration</th>
             </tr>
           </thead>
@@ -90,8 +88,8 @@ const LoginHistory = () => {
                 <td>{log.email}</td>
                 <td>{formatDateTime(log.loginTime)}</td>
                 <td>{formatDateTime(log.logoutTime)}</td>
-                <td>{log.ipAddress}</td>
-                <td>{log.isSuccessful ? "Yes" : "No"}</td>
+                {/* <td>{log.ipAddress}</td>
+                <td>{log.isSuccessful ? "No" : "Yes"}</td> */}
                 <td>
                   {formatSessionDuration(log.sessionDuration, log.logoutTime)}
                 </td>

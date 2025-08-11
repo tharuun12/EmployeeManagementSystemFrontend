@@ -99,23 +99,23 @@ const EmployeeEdit = () => {
     e.preventDefault();
     setServerError("");
     if (!form.fullName) {
-      setErrors(prev => ({ ...prev, fullName: "Full Name is required" }));
+      toast.error("Full Name is required");
       return;
     }
     if (!form.email) {
-      setErrors(prev => ({ ...prev, email: "Email is required" }));
+      toast.error("Email is required");
       return;
     }
     if (!form.role) {
-      setErrors(prev => ({ ...prev, role: "Role is required" }));
+      toast.error("Role is required");
       return;
     }
     if (!form.departmentId) {
-      setErrors(prev => ({ ...prev, departmentId: "Department is required" }));
+      toast.error("Department is required");
       return;
     }
     if (!form.leaveBalance) {
-      setErrors(prev => ({ ...prev, leaveBalance: "Leave Balance is required" }));
+      toast.error("Leave Balance is required");
       return;
     }
     try {

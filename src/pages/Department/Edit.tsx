@@ -69,10 +69,7 @@ const DepartmentEdit = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!form.departmentName) {
-      setErrors((prev) => ({
-        ...prev,
-        departmentName: "Department Name is required",
-      }));
+      toast.error("Department Name is required");
       return;
     }
 

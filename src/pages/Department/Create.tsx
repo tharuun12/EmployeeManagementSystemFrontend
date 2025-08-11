@@ -53,10 +53,7 @@ const DepartmentCreate = () => {
     setServerError("");
 
     if (!form.departmentName) {
-      setErrors((prev) => ({
-        ...prev,
-        departmentName: "Department Name is required",
-      }));
+      toast.error("Department Name is required");
       return;
     }
 

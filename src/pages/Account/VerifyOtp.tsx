@@ -42,7 +42,7 @@ const VerifyOtp = () => {
     setSuccess(false);
 
     if (!form.otp) {
-      setErrors({ otp: "OTP is required" });
+      toast.error("OTP is required" );
       return;
     }
 
