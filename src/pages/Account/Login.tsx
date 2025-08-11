@@ -51,6 +51,7 @@ const Login = () => {
 
     try {
       setLoading(true);
+      console.log(JSON.stringify(form, null, 2))
       const response = await api.post("/account/login", form);
 
       const { token, roles, name, email, employeeId } = response.data;

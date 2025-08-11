@@ -1,13 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 
 interface JwtPayload {
-  sub?: string;
-  exp: number;
-  iss?: string;
-  aud?: string;
-  jti?: string;
-
-  // Claim-based custom keys
   "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"?: string;
   "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"?: string | string[];
   "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"?: string;
@@ -35,6 +28,7 @@ export default function useAuth() {
       user = { role, email, userId };
       isLoggedIn = true;
 
+      console.log("User logged in:", user); 
     } catch (err) {
       console.error("Invalid token:", err);
     }

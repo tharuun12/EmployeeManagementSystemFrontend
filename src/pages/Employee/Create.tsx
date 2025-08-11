@@ -95,6 +95,16 @@ const EmployeeCreate = () => {
       return;
     }
     try {
+      console.log(JSON.stringify({
+        fullName: form.fullName,
+        email: form.email,
+        phoneNumber: form.phoneNumber,
+        role: form.role,
+        departmentId: parseInt(form.departmentId, 10),
+        isActive: form.isActive === "true",
+        leaveBalance: parseFloat(form.leaveBalance),
+      }, null, 2));
+
       await api.post("/employees/create", {
         fullName: form.fullName,
         email: form.email,
@@ -109,6 +119,7 @@ const EmployeeCreate = () => {
     } catch (err: any) {
       const errorMessage =
         err?.response?.data?.message ;
+      console.error("Error creating employee:", errorMessage);
       toast.error(errorMessage);
     }
   };
@@ -160,6 +171,9 @@ const EmployeeCreate = () => {
             className="form-control"
             value={form.phoneNumber}
             onChange={handleChange}
+            maxLength={10}
+            inputMode="numeric"
+            pattern="\d*"
           />
           {errors.phoneNumber && (
             <span className="form-error">{errors.phoneNumber}</span>

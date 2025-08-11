@@ -41,6 +41,7 @@ const Dashboard = () => {
       .get("/dashboard/Index")
       .then((res) => {
         setData(res.data);
+        console.log("Dashboard data:", res.data);
         setLoading(false);
       })
       .catch(() => {

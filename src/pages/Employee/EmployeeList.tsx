@@ -24,12 +24,12 @@ type Employee = {
 
 const EmployeeList = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    setLoading(false);
+    setLoading(true);
     api
       .get("/employees")
       .then((res) => {
@@ -38,7 +38,7 @@ const EmployeeList = () => {
       .catch(() => {
         setError("Failed to load employees.");
       }).finally(() => {
-        setLoading(true);
+        setLoading(false);
       });
   }, []);
   if (loading) {

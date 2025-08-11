@@ -22,9 +22,15 @@ const EmployeeLeaveList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const employeeId = localStorage.getItem("userId");
+
   useEffect(() => {
     api
-      .get("/leave/employeeleavelist")
+      .get("/leave/manager-leave-approval", {
+        params: {
+          employeeId: employeeId,
+        },
+      })
       .then((res) => {
         setLeaves(res.data);
         setLoading(false);
@@ -70,8 +76,8 @@ const EmployeeLeaveList = () => {
                 <td>{leave.reason}</td>
                 <td>
                   <Link
-                    to={`/leave/approvals/${leave.leaveRequestId}`}
-                    className=".btn-action .btn-create"
+                    to={`/leave/approval/${leave.leaveRequestId}`}
+                    className="btn-action btn-create"
                   >
                     Review
                   </Link>

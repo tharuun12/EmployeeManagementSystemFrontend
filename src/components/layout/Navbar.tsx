@@ -15,14 +15,14 @@ const Navbar = () => {
         <div className="navbar-links">
           {isLoggedIn && role === "Admin" && (
             <>
-              <li><Link to="/dashboard" className="navbar-link">Dashboard</Link></li>
-              <li><Link to="/employee/employeelist" className="navbar-link">All Employees</Link></li>
-              <li><Link to="/employee/managerslist" className="navbar-link">Managers</Link></li>
+              <li><Link to="/dashboard" className="navbar-link">Home</Link></li>
+              <li><Link to="/employee/employeelist" className="navbar-link">Employees</Link></li>
               <li><Link to="/department" className="navbar-link">Departments</Link></li>
               <li><Link to="/leave/approvelist" className="navbar-link">Leave Approvals</Link></li>
+              <li><Link to="/employee/filter" className="navbar-link">Filter</Link></li>
+              <li><Link to="/employee/managerslist" className="navbar-link">Managers</Link></li>
               <li><Link to="/activity" className="navbar-link">Logs</Link></li>
               <li><Link to="/account/changepassword" className="navbar-link">Change Password</Link></li>
-              <li><Link to="/employee/filter" className="navbar-link">Filter</Link></li>
             </>
           )}
 

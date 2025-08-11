@@ -2,7 +2,7 @@ import React from "react";
 import Apply from "./Apply";
 import Approvals from "./Approvals";
 import ApproveList from "./ApproveList";
-import EmployeeLeaveList from "./EmployeeLeaveList";
+import EmployeeLeaveList from "./ManagerApprovalList";
 import MyLeaves from "./MyLeaves";
 
 const LeaveRoutes = [

@@ -1,9 +1,8 @@
-// src/common/toastService.ts
 import { toast, ToastOptions } from "react-toastify";
 
 const DEFAULT_OPTS: ToastOptions = {
   position: "top-right",
-  autoClose: 1000, // ← 1 second
+  autoClose: 500, 
   pauseOnHover: true,
   draggable: true,
 };

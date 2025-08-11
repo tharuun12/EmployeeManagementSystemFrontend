@@ -28,7 +28,6 @@ body {
 }
 
 /*Register Page*/
-/* Container styling */
 .register-container {
     max-width: 500px;
     margin: 40px auto;
@@ -63,7 +62,7 @@ body {
 
 /* Inputs */
 .register-input {
-    width: 100%;
+    width: 95%;
     padding: 10px 12px;
     font-size: 16px;
     border: 1px solid #ced4da;
@@ -117,8 +116,7 @@ body {
     margin-top: 20px;
 }
 
-/*Login Page*/
-/* Container */
+/*---------------------------------------Login Page------------------------------*/
 .login-container {
     max-width: 480px;
     margin: 40px auto;
@@ -153,7 +151,7 @@ body {
 
 /* Inputs */
 .login-input {
-    width: 100%;
+    width: 95%;
     padding: 10px 12px;
     font-size: 16px;
     border: 1px solid #ced4da;
@@ -179,8 +177,6 @@ body {
 /* Validation summary */
 .login-validation-summary {
     color: #dc3545;
-    /*    background-color: #f8d7da;
-    border: 1px solid #f5c6cb;*/
     padding: 10px;
     border-radius: 5px;
     margin-bottom: 15px;
@@ -263,15 +259,6 @@ body {
     width: 100%;
 }
 
-.login-input {
-    width: 100%;
-    padding: 10px 12px;
-    font-size: 16px;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
 .login-input:focus {
     border-color: #007bff;
     outline: none;
@@ -305,7 +292,7 @@ body {
 }
 
 /*New CSS code */
-/* Universal Create Form Styling */
+/*--------------------------------------------------- Universal Create Form Styling ----------------------------------------*/
 .create-form {
     max-width: 600px;
     margin: 40px auto;
@@ -413,7 +400,7 @@ body {
     }
 }
 
-/*Employee Profile*/
+/*-------------------------------------------------Employee Profile----------------------------------------------*/
 .employee-profile-container {
     display: flex;
     justify-content: center;
