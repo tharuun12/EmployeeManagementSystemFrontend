@@ -31,7 +31,7 @@ const ChangePassword = () => {
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -56,10 +56,15 @@ const ChangePassword = () => {
         Email: user?.email,
       });
       notifySuccess("Password changed successfully");
-      navigate("/");
+      const userString = localStorage.getItem("user");
+      const currentUser = userString ? JSON.parse(userString) : null;
+      const role = currentUser?.roles?.[0];
+      if (role === "Admin") navigate("/dashboard");
+      else if (role === "Manager") navigate("/manager/profile");
+      else navigate("/employee/profile");
     } catch (err: any) {
       const errorMessage =
-        err?.response?.data?.message;
+        err?.response?.data?.message || "Failed to change password.";
       toast.error(errorMessage);
     } finally {
       setLoading(false);

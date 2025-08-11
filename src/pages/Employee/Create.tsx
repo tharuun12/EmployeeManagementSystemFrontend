@@ -45,18 +45,22 @@ const EmployeeCreate = () => {
     leaveBalance: "",
   });
   const [errors, notifyError] = useState<EmployeeErrors>({});
+  const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState("");
   const [departments, setDepartments] = useState<Department[]>([]);
   const [roles, setRoles] = useState<string[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
+    setLoading(true);
     api.get("/department")
       .then(res => setDepartments(res.data))
-      .catch(() => setDepartments([]));
+      .catch(() => setDepartments([]))
+      .finally(() => setLoading(false));
     api.get("/roles")
       .then(res => setRoles(res.data))
-      .catch(() => setRoles([]));
+      .catch(() => setRoles([]))
+      .finally(() => setLoading(false));
   }, []);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -95,16 +99,16 @@ const EmployeeCreate = () => {
       return;
     }
     try {
-      console.log(JSON.stringify({
-        fullName: form.fullName,
-        email: form.email,
-        phoneNumber: form.phoneNumber,
-        role: form.role,
-        departmentId: parseInt(form.departmentId, 10),
-        isActive: form.isActive === "true",
-        leaveBalance: parseFloat(form.leaveBalance),
-      }, null, 2));
-
+      // console.log(JSON.stringify({
+      //   fullName: form.fullName,
+      //   email: form.email,
+      //   phoneNumber: form.phoneNumber,
+      //   role: form.role,
+      //   departmentId: parseInt(form.departmentId, 10),
+      //   isActive: form.isActive === "true",
+      //   leaveBalance: parseFloat(form.leaveBalance),
+      // }, null, 2));
+      setLoading(true);
       await api.post("/employees/create", {
         fullName: form.fullName,
         email: form.email,
@@ -121,9 +125,13 @@ const EmployeeCreate = () => {
         err?.response?.data?.message ;
       console.error("Error creating employee:", errorMessage);
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
-
+  if (loading) {
+    return <LoadingSpinner />;
+  }
   return (
     <div className="create-form">
       <h2 className="form-title">Add New Employee</h2>

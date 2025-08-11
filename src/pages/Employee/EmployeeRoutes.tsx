@@ -11,12 +11,12 @@ import MyLeaves from "./MyLeaves";
 
 const EmployeeRoutes = [
   {
-    path: "/employee/create",
-    element: <Create />,
+    path: "/employee/profile",
+    element: <Index />,
   },
   {
-    path: "/employee/monthlyreport",
-    element: <CurrentMonthInfo />,
+    path: "/employee/create",
+    element: <Create />,
   },
   {
     path: "/employee/delete/:id",
@@ -31,20 +31,20 @@ const EmployeeRoutes = [
     element: <EmployeeList />,
   },
   {
-    path: "/employee/filter",
-    element: <Filter />,
-  },
-  {
-    path: "/employee/profile",
-    element: <Index />,
-  },
-  {
     path: "/employee/managerslist",
     element: <ManagersList />,
   },
   {
+    path: "/employee/filter",
+    element: <Filter />,
+  },
+  {
     path: "/employee/myleaves/:id",
     element: <MyLeaves />,
+  },
+  {
+    path: "/employee/monthlyreport",
+    element: <CurrentMonthInfo />,
   },
 ];
 

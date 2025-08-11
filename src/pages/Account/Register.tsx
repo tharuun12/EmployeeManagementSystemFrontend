@@ -43,7 +43,6 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError("");
-    // Basic client-side validation
     if (form.password !== form.confirmPassword) {
       setErrors({ confirmPassword: "Passwords do not match" });
       return;
@@ -66,8 +65,6 @@ const Register = () => {
   if (loading) {
     return <LoadingSpinner />;
   }
-
-
 
   return (
     <div className="register-container">

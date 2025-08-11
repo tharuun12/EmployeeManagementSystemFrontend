@@ -13,28 +13,32 @@ type Manager = {
 
 const ManagersList = () => {
   const [managers, setManagers] = useState<Manager[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);  
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     api
       .get("/employees/managers")
       .then((res) => {
         setManagers(res.data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load manager records.");
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load managers.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
-
+  if (loading) {
+    return <LoadingSpinner />;
+  }
   return (
     <div className="data-section">
       <h2 className="data-title">Manager Details</h2>
-      {loading ? (
-        <LoadingSpinner />
-      ) : error ? (
+      {error ? (
         <div className="data-empty">{error}</div>
       ) : managers.length > 0 ? (
         <table className="data-table">

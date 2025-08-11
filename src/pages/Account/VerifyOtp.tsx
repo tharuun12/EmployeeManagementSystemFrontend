@@ -31,7 +31,6 @@ const VerifyOtp = () => {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
@@ -57,16 +56,14 @@ const VerifyOtp = () => {
       });
 
       setSuccess(true);
-      setLoading(false);
       setTimeout(() => {
         navigate("/account/resetpassword", {
           state: { email: form.email },
         });
       }, 1000);
     } catch (err: any) {
-      setLoading(false);
       const errorMessage =
-        err?.response?.data?.message ;
+        err?.response?.data?.message || "Failed to verify OTP.";
       toast.error(errorMessage);
     } finally {
       setLoading(false);

@@ -6,6 +6,10 @@ import Index from "./Index";
 
 const DepartmentRoutes = [
   {
+    path: "/department/",
+    element: <Index />,
+  },
+  {
     path: "/department/create",
     element: <Create />,
   },
@@ -16,11 +20,7 @@ const DepartmentRoutes = [
   {
     path: "/department/edit/:id",
     element: <Edit />,
-  },
-  {
-    path: "/department/",
-    element: <Index />,
-  },
+  }
 ];
 
 export default DepartmentRoutes;

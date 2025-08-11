@@ -4,11 +4,14 @@ import {toast} from "react-toastify";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
 import LoadingSpinner  from "../../components/shared/LoadingSpinner";
 import api from "../../api/axiosInstance"; 
+
 type Department = {
-  departmentName: string;
+    departmentId: number;
+    departmentName: string;
 };
 
 type Employee = {
+  employeeId: number;
   fullName: string;
   email: string;
   phoneNumber: string;
@@ -18,34 +21,36 @@ type Employee = {
   isActive: boolean;
 };
 
-type EmployeeProfile = {
-  employee: Employee;
-};
-
 const ManagerProfile = () => {
-  const [profile, setProfile] = useState<EmployeeProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<Employee | null>(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     api
       .get("/manager/profile")
       .then((res) => {
         setProfile(res.data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load profile.");
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load profile.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
 
   return (
     <div className="employee-profile-container">
       <div className="employee-profile-card">
-        <h2 className="profile-title">
-          {profile?.employee.role ? `${profile.employee.role} Profile` : "Profile"}
-        </h2>
+        <h2 className="profile-title">Manager Profile</h2>
         {loading ? (
           <LoadingSpinner />
         ) : error ? (
@@ -54,32 +59,32 @@ const ManagerProfile = () => {
           <div className="profile-info">
             <div className="profile-row">
               <span className="label">Full Name:</span>
-              <span className="value">{profile.employee.fullName}</span>
+              <span className="value">{profile.fullName}</span>
             </div>
             <div className="profile-row">
               <span className="label">Email:</span>
-              <span className="value">{profile.employee.email}</span>
+              <span className="value">{profile.email}</span>
             </div>
             <div className="profile-row">
               <span className="label">Phone:</span>
-              <span className="value">{profile.employee.phoneNumber}</span>
+              <span className="value">{profile.phoneNumber}</span>
             </div>
             <div className="profile-row">
               <span className="label">Role:</span>
-              <span className="value">{profile.employee.role}</span>
+              <span className="value">{profile.role}</span>
             </div>
             <div className="profile-row">
               <span className="label">Department:</span>
-              <span className="value">{profile.employee.department?.departmentName || ""}</span>
+              <span className="value">{profile.department?.departmentName || ""}</span>
             </div>
             <div className="profile-row">
               <span className="label">Leave Balance:</span>
-              <span className="value">{profile.employee.leaveBalance}</span>
+              <span className="value">{profile.leaveBalance}</span>
             </div>
             <div className="profile-row">
               <span className="label">Status:</span>
-              <span className={`value ${profile.employee.isActive ? "approved" : "rejected"}`}>
-                {profile.employee.isActive ? "Active" : "Inactive"}
+              <span className={`value ${profile.isActive ? "approved" : "rejected"}`}>
+                {profile.isActive ? "Active" : "Inactive"}
               </span>
             </div>
           </div>

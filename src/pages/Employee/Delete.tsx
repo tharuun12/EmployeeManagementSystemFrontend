@@ -14,7 +14,7 @@ type Employee = {
 const EmployeeDelete = () => {
   const { id } = useParams<{ id: string }>();
   const [employee, setEmployee] = useState<Employee | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
@@ -22,17 +22,20 @@ const EmployeeDelete = () => {
   useEffect(() => {
     if (!id) {
       setError("Invalid employee ID.");
-      setLoading(false);
       return;
     }
+    setLoading(true);
     api
       .get(`/employees/delete/${id}`)
       .then((res) => {
         setEmployee(res.data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load employee.");
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, [id]);
@@ -43,6 +46,7 @@ const EmployeeDelete = () => {
     setDeleting(true);
     setError("");
     try {
+      setLoading(true);
       await api.delete(`/employees/delete/${employee.employeeId}`);
       notifySuccess("Employee Delete successfully!");
       navigate("/employee/employeelist");
@@ -51,6 +55,8 @@ const EmployeeDelete = () => {
         err?.response?.data?.message || "Failed to delete employee.";
       toast.error(errorMessage);
       setDeleting(false);
+    } finally {
+      setLoading(false);
     }
   };
 

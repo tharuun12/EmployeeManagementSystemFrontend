@@ -39,24 +39,31 @@ const formatSessionDuration = (duration: string | null | undefined, logoutTime: 
 
 const LoginHistory = () => {
   const [logs, setLogs] = useState<LoginActivityLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
     let url = `/Activity/login-history/${userId}`;
-  
+    setLoading(true);
     api
       .get(url)
       .then((res) => {
         setLogs(res.data.logs);
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load login history.");
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load login history .";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, [userId]);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="data-section">

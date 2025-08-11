@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import api from "../../api/axiosInstance"; 
 import LoadingSpinner from "../../components/shared/LoadingSpinner";
+import {toast} from "react-toastify";
+import { notifySuccess, notifyError } from "../../components/shared/toastService";
+
 type Department = {
   departmentName: string;
 };
@@ -23,10 +26,11 @@ type EmployeeProfile = {
 
 const EmployeeProfile = () => {
   const [profile, setProfile] = useState<EmployeeProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);  
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     api
       .get("/employees/profile", {
       params: {
@@ -34,22 +38,27 @@ const EmployeeProfile = () => {
       }
       })
       .then((res) => {
-      setProfile(res.data);
-      setLoading(false);
+        setProfile(res.data);
       })
-      .catch(() => {
-      setError("Failed to load profile.");
-      setLoading(false);
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load profile.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="employee-profile-container">
       <div className="employee-profile-card">
         <h2 className="profile-title">Employee Profile</h2>
-        {loading ? (
-          <LoadingSpinner />
-        ) : error ? (
+        { error ? (
           <div className="profile-row">{error}</div>
         ) : profile ? (
           <div className="profile-info">

@@ -19,12 +19,12 @@ type LeaveRequest = {
 
 const EmployeeLeaveList = () => {
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);  const [error, setError] = useState("");
 
   const employeeId = localStorage.getItem("userId");
 
   useEffect(() => {
+    setLoading(true);
     api
       .get("/leave/manager-leave-approval", {
         params: {
@@ -33,10 +33,13 @@ const EmployeeLeaveList = () => {
       })
       .then((res) => {
         setLeaves(res.data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load pending leave requests.");
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);

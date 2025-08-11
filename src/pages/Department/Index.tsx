@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import api from "../../api/axiosInstance"; 
+import api from "../../api/axiosInstance";
 import { Link } from "react-router-dom";
-import LoadingSpinner  from "../../components/shared/LoadingSpinner";
-import {toast} from "react-toastify";
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
+import { toast } from "react-toastify";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
 type Manager = {
   fullName: string;
@@ -21,21 +21,23 @@ const DepartmentList = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     api
       .get("/department/")
       .then((res) => {
         setDepartments(res.data);
-        setLoading(true);
       })
-      .catch(() => {
-        toast.error("Failed to load departments.");
-        setError("Failed to load departments.");
-        setLoading(true);
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
       }).finally(() => {
         setLoading(false);
       });
   }, []);
-
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="data-section">
@@ -46,11 +48,7 @@ const DepartmentList = () => {
           Add New Department
         </Link>
       </div>
-      {loading ? (
-        <LoadingSpinner />
-      ) : error ? (
-        <div className="data-empty">{error}</div>
-      ) : departments.length > 0 ? (
+      {departments.length > 0 ? (
         <table className="data-table">
           <thead>
             <tr>
@@ -74,7 +72,7 @@ const DepartmentList = () => {
                   >
                     Edit
                   </Link>
-                  
+
                 </td>
                 <td>
                   <Link

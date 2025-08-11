@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
-import LoadingSpinner  from "../../components/shared/LoadingSpinner";
-import api from "../../api/axiosInstance"; 
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
+import api from "../../api/axiosInstance";
 import { Console } from "console";
 type LeaveRequest = {
   startDate: string;
@@ -17,7 +17,7 @@ type CurrentMonthInfo = {
   currentMonth: string;
   leaveRequests: LeaveRequest[];
   daysOnLeave?: number;
-  employee?: any; 
+  employee?: any;
   managerName?: string;
   remainingLeaveBalance?: number;
 };
@@ -30,29 +30,31 @@ const CurrentMonthInfo = () => {
 
   useEffect(() => {
     setLoading(true);
-  api
-    .get("/employees/current-month-info", {
-      params: {
-        id: localStorage.getItem("userId"),
-      }
-    })
-    .then((res) => {
-      const response = res.data;
-      if (response && Array.isArray(response.leaveRequests)) {
-        setData(response);
-        setLeaves(response.leaveRequests);
-      } else {
-        setData(response);
-        setLeaves([]);
-      }
-    })
-    .catch(() => {
-      setError("Failed to load current month information.");
-    })
-    .finally(() => {
-      setLoading(false); 
-    });
-}, []);
+    api
+      .get("/employees/current-month-info", {
+        params: {
+          id: localStorage.getItem("userId"),
+        }
+      })
+      .then((res) => {
+        const response = res.data;
+        if (response && Array.isArray(response.leaveRequests)) {
+          setData(response);
+          setLeaves(response.leaveRequests);
+        } else {
+          setData(response);
+          setLeaves([]);
+        }
+      })
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
 
   if (loading) {
@@ -67,37 +69,37 @@ const CurrentMonthInfo = () => {
       </h2>
 
       {data && Array.isArray(data.leaveRequests) && data.leaveRequests.length > 0 ? (
-          <div className="">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                  <th>Reason</th>
-                  <th>Status</th>
-                  <th>Request Date</th>
+        <div className="">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Request Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {leaves.map((leave, idx) => (
+                <tr key={idx}>
+                  <td>{new Date(leave.startDate).toLocaleDateString()}</td>
+                  <td>{new Date(leave.endDate).toLocaleDateString()}</td>
+                  <td>{leave.reason}</td>
+                  <td>
+                    <span className={`data-status ${leave.status.toLowerCase()}`}>
+                      {leave.status}
+                    </span>
+                  </td>
+                  <td>{new Date(leave.requestDate).toLocaleDateString()}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {leaves.map((leave, idx) => (
-                  <tr key={idx}>
-                    <td>{new Date(leave.startDate).toLocaleDateString()}</td>
-                    <td>{new Date(leave.endDate).toLocaleDateString()}</td>
-                    <td>{leave.reason}</td>
-                     <td>
-                      <span className={`data-status ${leave.status.toLowerCase()}`}>
-                        {leave.status}
-                      </span>
-                    </td>
-                    <td>{new Date(leave.requestDate).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="data-empty">No leave requests for the current month.</div>
-        )}
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="data-empty">No leave requests for the current month.</div>
+      )}
     </div>
   );
 };

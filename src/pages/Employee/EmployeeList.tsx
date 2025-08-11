@@ -35,12 +35,16 @@ const EmployeeList = () => {
       .then((res) => {
         setEmployees(res.data);
       })
-      .catch(() => {
-        setError("Failed to load employees.");
-      }).finally(() => {
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -71,13 +75,7 @@ const EmployeeList = () => {
           </tr>
         </thead>
         <tbody>
-          {loading ? (
-            <tr>
-              <td colSpan={9} className="data-empty">
-                <LoadingSpinner />
-              </td>
-            </tr>
-          ) : error ? (
+          {error ? (
             <tr>
               <td colSpan={9} className="data-empty">
                 {error}

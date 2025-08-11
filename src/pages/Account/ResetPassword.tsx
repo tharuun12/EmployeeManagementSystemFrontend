@@ -57,6 +57,7 @@ const ResetPassword = () => {
       const res = await api.post("/account/reset-password", form);
       setSuccess(true);
       notifySuccess("Password reset successful.");
+      setLoading(false);
       setTimeout(() => navigate("/account/login"), 1000);
     } catch (err: any) {
       const errorMessage =

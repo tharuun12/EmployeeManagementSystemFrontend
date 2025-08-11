@@ -33,22 +33,26 @@ type DashboardData = {
 
 const Dashboard = () => {
   const [data, setData] = useState<DashboardData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     api
       .get("/dashboard/Index")
       .then((res) => {
         setData(res.data);
-        console.log("Dashboard data:", res.data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load dashboard data.");
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
+
 
 
   useEffect(() => {

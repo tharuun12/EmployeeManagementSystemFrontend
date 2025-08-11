@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
-import LoadingSpinner  from "../../components/shared/LoadingSpinner";
-import api from "../../api/axiosInstance"; 
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
+import api from "../../api/axiosInstance";
 import { Link } from "react-router-dom";
 
 type Employee = {
@@ -13,21 +13,28 @@ type Employee = {
 
 const ActivityIndex = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const userId = localStorage.getItem("userId");
   useEffect(() => {
+    setLoading(true);
     api
       .get(`/activity/employees`)
       .then((res) => {
         setEmployees(res.data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load employee activity records.");
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="data-section">

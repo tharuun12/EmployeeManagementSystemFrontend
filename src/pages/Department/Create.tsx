@@ -57,12 +57,11 @@ const DepartmentCreate = () => {
         ...prev,
         departmentName: "Department Name is required",
       }));
-      setLoading(false); 
       return;
     }
 
     try {
-    
+      setLoading(true);
       const payload: any = {
         DepartmentName: form.departmentName,
       };

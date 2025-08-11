@@ -51,7 +51,6 @@ const Login = () => {
 
     try {
       setLoading(true);
-      console.log(JSON.stringify(form, null, 2))
       const response = await api.post("/account/login", form);
 
       const { token, roles, name, email, employeeId } = response.data;
@@ -65,7 +64,7 @@ const Login = () => {
       const role = roles[0];
       notifySuccess("Login successful!");
       if (role === "Admin") navigate("/dashboard");
-      else if (role === "Manager") navigate("/employee/profile");
+      else if (role === "Manager") navigate("/manager/profile");
       else navigate("/employee/profile");
     } catch (err: any) {
       const errorMessage =

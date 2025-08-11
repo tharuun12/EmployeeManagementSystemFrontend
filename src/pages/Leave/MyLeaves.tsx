@@ -15,31 +15,37 @@ type LeaveRequest = {
 const MyLeaves = () => {
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
   const [employeeName, setEmployeeName] = useState<string>("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);  
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     api
       .get(`/leave/my/${localStorage.getItem("userId")}`)
       .then((res) => {
         setLeaves(res.data.leaves || res.data); 
         setEmployeeName(res.data.employeeName || "");
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load your leaves.");
+       .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="data-section">
       <h2 className="data-title">
         My Leaves{employeeName ? ` - ${employeeName}` : ""}
       </h2>
-      {loading ? (
-        <LoadingSpinner />
-      ) : error ? (
+      {error ? (
         <div className="data-empty">{error}</div>
       ) : leaves.length > 0 ? (
         <table className="data-table">

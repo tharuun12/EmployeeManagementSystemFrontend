@@ -1,12 +1,9 @@
 import React from "react";
 import ChangePassword from "./ChangePassword";
 import ForgotPassword from "./ForgotPassword";
-import ForgotPasswordConfirmation from "./ForgotPasswordConfirmation";
-import ForgotPasswordNotFound from "./ForgotPasswordNotFound";
 import Login from "./Login";
 import Register from "./Register";
 import ResetPassword from "./ResetPassword";
-import ResetPasswordConfirmation from "./ResetPasswordConfirmation";
 import VerifyOtp from "./VerifyOtp";
 import api from "../../api/axiosInstance"; 
 
@@ -21,14 +18,6 @@ const AccountRoutes = [
     element: <ForgotPassword />,
   },
   {
-    path: "/account/forgotpasswordconfirmation",
-    element: <ForgotPasswordConfirmation />,
-  },
-  {
-    path: "/account/forgotpasswordnotfound",
-    element: <ForgotPasswordNotFound />,
-  },
-  {
     path: "/account/login",
     element: <Login />,
   },
@@ -39,10 +28,6 @@ const AccountRoutes = [
   {
     path: "/account/resetpassword",
     element: <ResetPassword />,
-  },
-  {
-    path: "/account/resetpasswordconfirmation",
-    element: <ResetPasswordConfirmation />,
   },
   {
     path: "/account/verifyotp",

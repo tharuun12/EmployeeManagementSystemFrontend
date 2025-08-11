@@ -21,18 +21,18 @@ const DepartmentDelete = () => {
   useEffect(() => {
     if (!id) {
       toast.error("Invalid department ID.");
-      setLoading(true);
       return;
     }
+    setLoading(true);
     api
       .get(`/department/delete/${id}`)
       .then((res) => {
         setDepartment(res.data);
-        setLoading(true);
       })
-      .catch(() => {
-        toast.error("Failed to load department.");
-        setLoading(true);
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
       })
       .finally(() => {
         setLoading(false);
@@ -50,9 +50,9 @@ const DepartmentDelete = () => {
       navigate("/department");
     } catch (err: any) {
       const errorMessage =
-        err?.response?.data?.message ;
+        err?.response?.data?.message || "Failed to delete department.";
       toast.error(errorMessage);
-    }finally {
+    } finally {
       setLoading(false);
     }
   };

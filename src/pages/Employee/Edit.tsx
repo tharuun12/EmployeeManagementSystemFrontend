@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import api from "../../api/axiosInstance"; 
+import api from "../../api/axiosInstance";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
 import { toast } from "react-toastify";
-import LoadingSpinner  from "../../components/shared/LoadingSpinner";
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
+import { number } from "prop-types";
 type Department = {
   departmentId: number;
   departmentName: string;
@@ -43,45 +44,47 @@ const EmployeeEdit = () => {
     isActive: "true",
     leaveBalance: "",
   });
+  const [prevLeaveBalance, setPrevLeaveBalance] = useState<string>("");
   const [errors, setErrors] = useState<EmployeeErrors>({});
   const [serverError, setServerError] = useState("");
   const [departments, setDepartments] = useState<Department[]>([]);
   const [roles, setRoles] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch employee, departments, and roles
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [empRes, deptRes, roleRes] = await Promise.all([
-        api.get(`/employees/edit/${id}`),
-        api.get("/department"),
-        api.get("/roles"),
-      ]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [empRes, deptRes, roleRes] = await Promise.all([
+          api.get(`/employees/edit/${id}`),
+          api.get("/department"),
+          api.get("/roles"),
+        ]);
+        await setLoading(false);
+        const empData = empRes.data;
 
-      const empData = empRes.data;
-
-      setForm({
-        employeeId: empData.employee.employeeId || "",
-        fullName: empData.employee.fullName || "",
-        email: empData.employee.email || "",
-        phoneNumber: empData.employee.phoneNumber || "",
-        role: empData.employee.role || "",
-        departmentId: empData.employee.departmentId?.toString() || "",
-        isActive: empData.employee.isActive ? "true" : "false",
-        leaveBalance: empData.employee.leaveBalance?.toString() || "",
-      });
-      setDepartments(deptRes.data || []);
-      setRoles(roleRes.data || []);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error loading employee data:", error);
-      setServerError("Failed to load employee data.");
-      setLoading(false);
-    }
-  };
+        setForm({
+          employeeId: empData.employee.employeeId || "",
+          fullName: empData.employee.fullName || "",
+          email: empData.employee.email || "",
+          phoneNumber: empData.employee.phoneNumber || "",
+          role: empData.employee.role || "",
+          departmentId: empData.employee.departmentId?.toString() || "",
+          isActive: empData.employee.isActive ? "true" : "false",
+          leaveBalance: empData.employee.leaveBalance?.toString() || "",
+        });
+        setPrevLeaveBalance(empData.employee.leaveBalance?.toString() || "");
+        setDepartments(deptRes.data || []);
+        setRoles(roleRes.data || []);
+      } catch (err: any) {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load employee data.";
+        toast.error(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchData();
   }, [id]);
@@ -116,6 +119,7 @@ const EmployeeEdit = () => {
       return;
     }
     try {
+      setLoading(true);
       await api.put(`/employees/edit/${form.employeeId}`, {
         employeeId: form.employeeId,
         fullName: form.fullName,
@@ -124,18 +128,19 @@ const EmployeeEdit = () => {
         role: form.role,
         departmentId: Number(form.departmentId),
         isActive: form.isActive === "true",
-        leaveBalance: Number(form.leaveBalance),
+        leaveBalance: Number(form.leaveBalance) + Number(prevLeaveBalance),
       });
       notifySuccess("Employee Updated successfully!");
       navigate("/employee/employeelist");
-      setLoading(false);
     } catch (err: any) {
       const errorMessage =
-        err?.response?.data?.message ;
+        err?.response?.data?.message;
       toast.error(errorMessage);
+    } finally {
       setLoading(false);
     }
   };
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -257,7 +262,7 @@ const EmployeeEdit = () => {
         </div>
 
         <div className="form-group">
-          <label className="form-label" htmlFor="leaveBalance">Update Leave Balance</label>
+          <label className="form-label" htmlFor="leaveBalance">Update Leave Balance ( current leave Balance: {prevLeaveBalance} )</label>
           <input
             name="leaveBalance"
             id="leaveBalance"

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axiosInstance";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
-import LoadingSpinner  from "../../components/shared/LoadingSpinner";
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
 type Manager = {
   employeeId: number;
   fullName: string;
@@ -36,6 +36,7 @@ const DepartmentEdit = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const [deptRes, mgrRes] = await Promise.all([
           api.get("/employees"),
           api.get(`/department/edit/${id}`),
@@ -47,10 +48,10 @@ const DepartmentEdit = () => {
           managerId: mgrRes.data.managerId?.toString() ?? "",
         });
         setManagers(Array.isArray(deptRes.data) ? deptRes.data : []);
-        setLoading(true);
-      } catch {
-        setServerError("Failed to load department data.");
-        setLoading(true);
+      } catch (err: any) {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
       } finally {
         setLoading(false);
       }
@@ -74,7 +75,7 @@ const DepartmentEdit = () => {
       }));
       return;
     }
-    
+
     try {
       setLoading(true);
       const payload: any = {
@@ -92,14 +93,14 @@ const DepartmentEdit = () => {
       navigate("/department");
     } catch (err: any) {
       const errorMessage =
-        err?.response?.data?.message ;
+        err?.response?.data?.message;
       notifyError(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-    if (loading) {
+  if (loading) {
     return <LoadingSpinner />;
   }
 
@@ -141,7 +142,7 @@ const DepartmentEdit = () => {
             className="form-control"
             value={form.managerId}
             onChange={handleChange}
-            
+
           >
             <option value="">-- No Manager Assigned --</option>
             {managers.map((manager) => (

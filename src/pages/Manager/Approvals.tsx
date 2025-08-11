@@ -21,8 +21,7 @@ type LeaveRequest = {
 const ManagerApprovals = () => {
   const { id } = useParams<{ id: string }>();
   const [leave, setLeave] = useState<LeaveRequest | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);  const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 

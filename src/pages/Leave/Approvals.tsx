@@ -20,8 +20,7 @@ type LeaveRequest = {
 const LeaveApprovals = () => {
   const { id } = useParams<{ id: string }>();
   const [leave, setLeave] = useState<LeaveRequest | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);  const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
@@ -30,14 +29,18 @@ const LeaveApprovals = () => {
       setLoading(false);
       return;
     }
+    setLoading(true);
     api
       .get(`/leave/${id}`)
       .then((res) => {
         setLeave(res.data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load leave request.");
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, [id]);
@@ -46,15 +49,20 @@ const LeaveApprovals = () => {
     if (!leave) return;
     setSubmitting(true);
     setError("");
+    setLoading(true);
     try {
       await api.post(`/leave/approved/${leave.leaveRequestId}`, {
         id: leave.leaveRequestId,
         status: status.toLowerCase(),
       });
       navigate("/leave/approvelist");
-    } catch {
-      setError("Failed to update leave request status.");
-      setSubmitting(false);
+    }  catch (err: any) {
+      const errorMessage =
+        err?.response?.data?.message ;
+        console.log("Error:", errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 

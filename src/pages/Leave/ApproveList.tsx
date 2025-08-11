@@ -19,24 +19,27 @@ type LeaveRequest = {
 
 const LeaveApproveList = () => {
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);  const [error, setError] = useState("");
 
   useEffect(() => {
-    setLoading(false);
+    setLoading(true);
     api
       .get("/leave/pending")
       .then((res) => {
         setLeaves(res.data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load pending leave requests.");
-        setLoading(false);
-      }).finally(() => {
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       }); 
   }, []);
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="data-section">

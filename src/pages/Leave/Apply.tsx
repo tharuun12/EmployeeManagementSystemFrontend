@@ -30,13 +30,12 @@ const LeaveApply = () => {
   const [errors, setErrors] = useState<LeaveRequestErrors>({});
   const [serverError, setServerError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [loading, setLoading] = useState(true);
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Fetch employee info on mount
   useEffect(() => {
-    setLoading(false);
+    setLoading(true);
     api
       .get("/employees/profile")
       .then((res) => {
@@ -105,13 +104,14 @@ const LeaveApply = () => {
     }
 
     try {
-      setLoading(false);
+      setLoading(true);
       await api.post("/leave/apply", form);
       navigate(`/leave/myleaves`);
     } catch (err: any) {
       const errorMessage =
-        err?.response?.data?.message ;
+        err?.response?.data?.message;
       toast.error(errorMessage);
+    } finally {
       setLoading(false);
     }
   };
@@ -193,7 +193,7 @@ const LeaveApply = () => {
         )}
         <div className="form-actions">
           <button type="submit" className="btn-approve btn-action" disabled={submitting}>
-            {submitting ? "Submitting..." : "Submit Request"}
+            Submit
           </button>
         </div>
         

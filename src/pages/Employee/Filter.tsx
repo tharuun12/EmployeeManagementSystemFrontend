@@ -23,12 +23,11 @@ const EmployeeFilter = () => {
   const [roles, setRoles] = useState<string[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [filters, setFilters] = useState({ departmentId: "", role: "" });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);  const [error, setError] = useState("");
 
   // Fetch departments and roles on mount
   useEffect(() => {
-    setLoading(false)
+    setLoading(true)
     api.get("/department/create")
       .then(res => setDepartments(res.data))
       .catch(() => setDepartments([]))
@@ -45,11 +44,14 @@ const EmployeeFilter = () => {
     setError("");
     api.get("/employees/filter", { params: filters })
       .then(res => setEmployees(res.data))
-      .catch(() => {
-        setEmployees([]);
-        setError("Failed to load employees.");
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load employees.";
+        toast.error(errorMessage);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+      });
   }, [filters]);
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -59,6 +61,10 @@ const EmployeeFilter = () => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
   };
+  
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="employee-filter-page">
@@ -106,9 +112,7 @@ const EmployeeFilter = () => {
       </form>
 
 
-      {loading ? (
-        <LoadingSpinner />
-      ) : error ? (
+      {error ? (
         <div className="data-empty">{error}</div>
       ) : employees.length > 0 ? (
         <table className="data-table">

@@ -20,6 +20,7 @@ const Subordinates = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setLoading(true);
     api
       .get("/manager/subordinates", {
         params: {  
@@ -28,11 +29,9 @@ const Subordinates = () => {
       })
       .then((res) => {
         setEmployees(res.data);
-        setLoading(true);
       })
       .catch(() => {
         setError("Failed to load subordinates.");
-        setLoading(true);
       }).finally(() => {
         setLoading(false);
       });

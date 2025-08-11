@@ -14,12 +14,13 @@ type LeaveRequest = {
 
 const MyLeaves = () => {
   const [leaves, setLeaves] = useState<LeaveRequest[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);  
   const [error, setError] = useState("");
 
   const { id } = useParams();
 
   useEffect(() => {
+    setLoading(true);
     api
       .get("/employees/my-leaves", {
         params: {
@@ -28,17 +29,18 @@ const MyLeaves = () => {
       })
       .then((res) => {
         setLeaves(res.data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load leave requests.");
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load employee leaves.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
-      }).finally(() => {
-        setLoading(true);
       });
   }, [id]);
 
-    if (loading) {
+  if (loading) {
     return <LoadingSpinner />;
   }
 

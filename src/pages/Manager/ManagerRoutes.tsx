@@ -1,15 +1,15 @@
 import React from "react";
-import Approvals from "./Approvals";
 import Index from "./Index";
 import Subordinates from "./Subordinates";
+// import Approvals from "./Approvals";
 
 const ManagerRoutes = [
+  // {
+  //   path: "/manager/approvals",
+  //   element: <Approvals />,
+  // },
   {
-    path: "/manager/approvals",
-    element: <Approvals />,
-  },
-  {
-    path: "/manager/",
+    path: "/manager/profile",
     element: <Index />,
   },
   {

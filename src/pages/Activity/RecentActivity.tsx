@@ -23,7 +23,7 @@ const formatDateTime = (dt: string | null | undefined) => {
 const RecentActivity = () => {
   const { userId } = useParams<{ userId?: string }>();
   const [activities, setActivities] = useState<UserActivityLog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -31,17 +31,25 @@ const RecentActivity = () => {
     if (userId) {
       url += `/${encodeURIComponent(userId)}`;
     }
+    setLoading(true);
     api
       .get(url)
       .then((res) => {
         setActivities(res.data);
-        setLoading(false);
       })
-      .catch(() => {
-        setError("Failed to load recent activity records.");
+      .catch((err: any) => {
+        const errorMessage =
+          err?.response?.data?.message || "Failed to load.";
+        toast.error(errorMessage);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, [userId]);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="data-section">

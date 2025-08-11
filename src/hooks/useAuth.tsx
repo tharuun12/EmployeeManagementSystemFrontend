@@ -27,8 +27,6 @@ export default function useAuth() {
 
       user = { role, email, userId };
       isLoggedIn = true;
-
-      console.log("User logged in:", user); 
     } catch (err) {
       console.error("Invalid token:", err);
     }
