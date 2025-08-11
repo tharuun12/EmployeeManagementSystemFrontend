@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import api from "../../api/axiosInstance"; 
+import api from "../../api/axiosInstance";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
-import LoadingSpinner  from "../../components/shared/LoadingSpinner";
+import LoadingSpinner from "../../components/shared/LoadingSpinner";
 
 type Department = {
   departmentId: number;
@@ -62,21 +62,24 @@ const DepartmentDelete = () => {
   }
 
   return (
-    <>
-      <h2>Delete Department</h2>
-      <p>
+    <div className="create-form">
+      <h2 className="form-title">Delete Department</h2>
+      <p className="form-content">
         Are you sure you want to delete <strong>{department?.departmentName}</strong>?
       </p>
       <form onSubmit={handleDelete}>
-        <input type="hidden" name="departmentId" value={department?.departmentId ?? ""} />
-        <button type="submit" className=".btn-delete btn-action" disabled={deleting}>
-          {deleting ? "Deleting..." : "Yes, Delete"}
-        </button>
-        <Link to="/department" className="btn-cancel btn-action" style={{ marginLeft: 8 }}>
-          Cancel
-        </Link>
+        <div className="form-actions">
+          <input type="hidden" name="departmentId" value={department?.departmentId ?? ""} />
+          <button type="submit" className="btn-delete btn-action" disabled={deleting}>
+            {deleting ? "Deleting..." : "Yes, Delete"}
+          </button>
+          <Link to="/department" className="btn-cancel btn-action" style={{ marginLeft: 8 }}>
+            Cancel
+          </Link>
+        </div>
+
       </form>
-    </>
+    </div>
   );
 };
 

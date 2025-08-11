@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import api from "../../api/axiosInstance"; 
+import api from "../../api/axiosInstance";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
 import { toast } from "react-toastify";
@@ -50,7 +50,7 @@ const EmployeeDelete = () => {
       await api.delete(`/employees/delete/${employee.employeeId}`);
       notifySuccess("Employee Delete successfully!");
       navigate("/employee/employeelist");
-    } catch (err: any){
+    } catch (err: any) {
       const errorMessage =
         err?.response?.data?.message || "Failed to delete employee.";
       toast.error(errorMessage);
@@ -69,21 +69,24 @@ const EmployeeDelete = () => {
   }
 
   return (
-    <>
-      <h2>Delete Employee</h2>
-      <p>
+    <div className="create-form">
+      <h2 className="form-title">Delete Employee</h2>
+      <p className="form-content">
         Are you sure you want to delete <strong>{employee?.fullName}</strong>?
       </p>
       <form onSubmit={handleDelete}>
-        <input type="hidden" name="employeeId" value={employee?.employeeId ?? ""} />
-        <button type="submit" className="btn-delete btn-action" disabled={deleting}>
-          {deleting ? "Deleting..." : "Delete"}
-        </button>
-        <Link to="/employee/employeelist" className="btn-cancel btn-action" style={{ marginLeft: 8 }}>
-          Cancel
-        </Link>
+        <div className="form-actions">
+          <input type="hidden" name="employeeId" value={employee?.employeeId ?? ""} />
+          <button type="submit" className="btn-delete btn-action" disabled={deleting}>
+            {deleting ? "Deleting..." : "Delete"}
+          </button>
+          <Link to="/employee/employeelist" className="btn-cancel btn-action" style={{ marginLeft: 8 }}>
+            Cancel
+          </Link>
+        </div>
+
       </form>
-    </>
+    </div>
   );
 };
 

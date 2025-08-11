@@ -310,7 +310,12 @@ body {
     margin-bottom: 25px;
     text-align: center;
 }
-
+.create-form .form-content {
+    font-size: 18px;
+    color: #212529;
+    margin-bottom: 25px;
+    text-align: center;
+}
 /* Form Fields */
 .create-form .form-group {
     margin-bottom: 20px;
