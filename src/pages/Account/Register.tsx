@@ -70,9 +70,6 @@ const Register = () => {
     <div className="register-container">
       <h2 className="register-title">Create Account</h2>
       <form onSubmit={handleSubmit} className="register-form">
-        {serverError && (
-          <div className="register-validation-summary">{serverError}</div>
-        )}
         <div className="register-group">
           <label className="register-label">Email</label>
           <input
@@ -88,7 +85,6 @@ const Register = () => {
           )}
         </div>
 
-        {/* Hidden fields for PhoneNumber and FullName */}
         <input
           type="hidden"
           name="phoneNumber"

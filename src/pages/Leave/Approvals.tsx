@@ -55,7 +55,14 @@ const LeaveApprovals = () => {
         id: leave.leaveRequestId,
         status: status.toLowerCase(),
       });
-      navigate("/leave/approvelist");
+      const userString = localStorage.getItem("user");
+      const currentUser = userString ? JSON.parse(userString) : null;
+      const role = currentUser?.roles?.[0];
+      if (role == "Admin"){
+        navigate("/leave/approvelist")
+      }else if (role == "Manager"){
+        navigate("/leave/employeeleavelist");
+      }
     }  catch (err: any) {
       const errorMessage =
         err?.response?.data?.message ;

@@ -33,7 +33,6 @@ const LeaveApply = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Fetch employee info on mount
   useEffect(() => {
     setLoading(true);
     api
@@ -110,6 +109,7 @@ const LeaveApply = () => {
       toast.error(errorMessage);
     } finally {
       setLoading(false);
+      setSubmitting(false);
     }
   };
   if (loading) {
