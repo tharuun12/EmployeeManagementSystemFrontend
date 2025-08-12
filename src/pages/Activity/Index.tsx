@@ -16,6 +16,7 @@ const ActivityIndex = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const userId = localStorage.getItem("userId");
+  
   useEffect(() => {
     setLoading(true);
     api
@@ -32,6 +33,7 @@ const ActivityIndex = () => {
         setLoading(false);
       });
   }, []);
+
   if (loading) {
     return <LoadingSpinner />;
   }

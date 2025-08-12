@@ -35,6 +35,7 @@ const DepartmentList = () => {
         setLoading(false);
       });
   }, []);
+  
   if (loading) {
     return <LoadingSpinner />;
   }

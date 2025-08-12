@@ -40,14 +40,16 @@ const DepartmentEdit = () => {
         const [deptRes, mgrRes] = await Promise.all([
           api.get("/employees"),
           api.get(`/department/edit/${id}`),
-
         ]);
+
         setForm({
           departmentId: mgrRes.data.departmentId,
           departmentName: mgrRes.data.departmentName,
           managerId: mgrRes.data.managerId?.toString() ?? "",
         });
+
         setManagers(Array.isArray(deptRes.data) ? deptRes.data : []);
+        
       } catch (err: any) {
         const errorMessage =
           err?.response?.data?.message || "Failed to load.";

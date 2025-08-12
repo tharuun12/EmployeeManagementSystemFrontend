@@ -54,7 +54,6 @@ const LeaveApply = () => {
       });
   }, []);
 
-  // Ensure EndDate cannot be before StartDate
   useEffect(() => {
     if (form.endDate && form.startDate && form.endDate < form.startDate) {
       toast.error("End Date cannot be before Start Date");
@@ -102,6 +101,7 @@ const LeaveApply = () => {
     try {
       setLoading(true);
       await api.post("/leave/apply", form);
+      notifySuccess("Applied Successfully !!")
       navigate(`/leave/myleaves`);
     } catch (err: any) {
       const errorMessage =
@@ -115,7 +115,6 @@ const LeaveApply = () => {
   if (loading) {
     return <LoadingSpinner />;
   }
-  // Set min date for StartDate as today
   const today = new Date().toISOString().split("T")[0];
 
   return (

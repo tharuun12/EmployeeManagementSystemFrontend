@@ -58,6 +58,7 @@ const LeaveApprovals = () => {
       const userString = localStorage.getItem("user");
       const currentUser = userString ? JSON.parse(userString) : null;
       const role = currentUser?.roles?.[0];
+      notifySuccess("Leave Approved Successfully");
       if (role == "Admin"){
         navigate("/leave/approvelist")
       }else if (role == "Manager"){

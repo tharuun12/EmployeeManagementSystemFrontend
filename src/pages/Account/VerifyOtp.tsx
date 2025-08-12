@@ -56,6 +56,7 @@ const VerifyOtp = () => {
       });
 
       setSuccess(true);
+      notifySuccess("OTP verified successfully");
       setTimeout(() => {
         navigate("/account/resetpassword", {
           state: { email: form.email },
@@ -69,9 +70,11 @@ const VerifyOtp = () => {
       setLoading(false);
     }
   };
+
   if (loading) {
     return <LoadingSpinner />;
   }
+  
   return (
     <div className="create-form">
       <h2 className="login-title">Verify OTP</h2>
