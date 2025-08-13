@@ -11,7 +11,7 @@ type LoginActivityLog = {
   logoutTime?: string | null;
   ipAddress: string;
   isSuccessful: boolean;
-  sessionDuration?: string | null; // ISO 8601 or "hh:mm:ss" string
+  sessionDuration?: string | null; 
 };
 
 const formatDateTime = (dt: string | null | undefined) => {

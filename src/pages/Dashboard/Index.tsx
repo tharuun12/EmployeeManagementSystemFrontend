@@ -143,7 +143,6 @@ const Dashboard = () => {
       });
     }
 
-    // Cleanup function to destroy charts
     return () => {
       if (summaryChart) {
         summaryChart.destroy();

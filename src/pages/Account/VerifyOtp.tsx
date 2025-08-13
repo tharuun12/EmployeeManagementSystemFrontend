@@ -54,7 +54,6 @@ const VerifyOtp = () => {
         expectedOtp,
         otpExpiry,
       });
-
       setSuccess(true);
       notifySuccess("OTP verified successfully");
       setTimeout(() => {

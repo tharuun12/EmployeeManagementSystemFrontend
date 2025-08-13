@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import "../../assets/styles/global.css.css";
-import api from "../../api/axiosInstance"; // your axios instance
+import api from "../../api/axiosInstance"; 
 import {toast} from "react-toastify";
 import { notifySuccess, notifyError } from "../../components/shared/toastService";
 
