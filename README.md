@@ -49,16 +49,6 @@ npm start
 
 The application will be available at `http://localhost:3000`.
 
-### 5. Build for Production
-
-To create a production build, run:
-
-```bash
-npm run build
-```
-
-The production-ready files will be available in the `build` folder.
-
 ## Project Structure
 
 The project is organized as follows:
