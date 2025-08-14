@@ -7,8 +7,14 @@ import DepartmentRoutes from "../pages/Department/DepartmentRoutes";
 import EmployeeRoutes from "../pages/Employee/EmployeeRoutes";
 import LeaveRoutes from "../pages/Leave/LeaveRoutes";
 import ManagerRoutes from "../pages/Manager/ManagerRoutes";
+import { Navigate } from "react-router-dom";
+
 
 const routes: RouteObject[] = [
+  {
+    path: "/",
+    element: <Navigate to="/account/login" replace /> 
+  },
   ...AccountRoutes,
   ...ActivityRoutes,
   ...DashboardRoutes,
